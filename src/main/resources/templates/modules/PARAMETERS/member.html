@@ -1,0 +1,245 @@
+<div class="card">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-naturales" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="card-header d-flex justify-content-between flex-wrap">
+                        <h5 class="mb-3 mb-sm-0">Gestión de Empresas</h5>
+                        <button class="btn btn-primary new" id="btnNew" th:text="#{CREATENEW}" th:disabled="${Actions.indexOf('Create') < 0}" th:hidden="${Actions.indexOf('Create') < 0}"></button>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 p-4 pb-5">
+                        <table id="table_MEMBER" class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Empresa</th>                                
+                                    <th scope="col">Rif</th>                                
+                                    <th scope="col">Teléfono</th>
+                                    <th scope="col">Correo</th>  
+                                    <th scope="col">Acciones</th>                                
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="layouts/content.html :: MemberModal"></th:block>
+<th:block th:replace="layouts/content.html :: AgencyMemberModal"></th:block>
+<script type="text/javascript" th:inline="javascript">
+var Array_Member  = [];
+var Array_Agency  = [];
+var id_country    = null;
+var Actions       = [[${Actions}]];
+$(document).ready( function () {
+    Load_Table_Member();
+    $('#AgencyMemberModal, #MemberModal').modal({
+        backdrop: 'static',
+        keyboard: false,
+        show: false
+    });
+    $('#btnNew').on('click', function (){
+        $("#MemberModalLabel").html("<i class='icon left fas fa-city'></i> "+"Creación de Empresa");
+        $('#BtnMember-Content').prop('hidden', false);
+        $("#MemberModal").modal("show");
+    });
+    $('#country').on('change', function() {
+        $('#state').empty().append('<option value="" selected> Seleccione...</option>');
+        $('#city').empty().append('<option value="" selected> Seleccione...</option>');
+        $('#municipality').empty().append('<option value="" selected> Seleccione...</option>');
+        $('#parish').empty().append('<option value="" selected> Seleccione...</option>');
+        if($(this).val() != '' && id_country != $(this).val()){
+            GetState($(this).val(),'state','');
+        }
+    });
+    $(".dnd").sortable({
+        connectWith: ".dnd",
+        cursor: "move",
+        helper: "clone",
+        items: "> div",
+        stop: function(event, ui) {
+            var item   = ui.item;
+            var parent = item.parent().attr("id");
+            
+            console.log(item[0].id, parent);
+        // Here's where am ajax call will go
+        }
+    }).disableSelection();
+});
+function Load_Table_Member ()
+{
+    $('#table_MEMBER').DataTable({
+        processing: false,
+        ordering  : true,
+        select    : false,
+        destroy   : true,
+        bInfo     : false,
+        responsive: true,
+        language  : {"url": dataTableLang},
+        ajax: 
+        {
+            url: "/PARAMETERS/Records",
+            type: "POST",
+            data: {table:'member'},
+            dataSrc: function(data) 
+            {
+                Array_Member = data;
+                return data;
+            }
+        },
+        order       : [0, 'asc'],
+        "columnDefs": [
+            {
+                "targets": [1,2,3,4],
+                "orderable": false
+            }
+        ],
+        pageLength : 10,
+        lengthMenu : [10, 20, 25],
+        columns: [
+            {data: 'member_name'  , className: 'text-center', defaultContent: ''},
+            {data: 'rif_full'     , className: 'text-center', defaultContent: ''},
+            {data: 'member_phone' , className: 'text-center', defaultContent: ''},
+            {data: 'member_email' , className: 'text-center', defaultContent: ''},
+            {
+                data: null,
+                searchable: false,
+                className: "text-center btn-admin",
+                render: function (data, type, row, index) {
+                    var btn     = "";
+                    if(Actions.length > 0){
+                        btn += '<div class="btn-group">';
+                        btn += '<button class="btn btn-secondary btn-admin btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">';
+                        btn += '<i class="fas fa-cog"></i>';
+                        btn += '</button>';
+                        btn += '<ul class="dropdown-menu">';
+                        if(data.member_status == true){                
+                            btn += '<li><a href="#" onClick="ManageMember(' + index.row + ',' + data.id + ',' + 1 + ');" class="dropdown-item"'+ GetActions('View') +'>Ver Detalle</a></li>';
+                            btn += '<li><a href="#" onClick="ManageMember(' + index.row + ',' + data.id + ',' + 2 + ');" class="dropdown-item"'+ GetActions('Edit') +'>Editar</a></li>';
+                            // btn += '<li><a href="#" onClick="AddAgency('+ data.id + ');" class="dropdown-item"'+ GetActions('Edit') +'>Asignar Agencias</a></li>';
+                            btn += '<li><a href="#" onClick="ChangeStatusMember(' + data.id + ',' + false + ');" class="dropdown-item"'+ GetActions('Edit') +'>Eliminar</a></li>';
+                        }else{
+                            btn += '<li><a href="#" onClick="ChangeStatusMember(' + data.id + ',' + true + ');" class="dropdown-item"'+ GetActions('Edit') +'>Habilitar</a></li>';
+                        }
+                        btn += '</ul>';
+                        btn += '</div>';
+                    }
+                    return btn;
+                }
+            }
+        ]
+    });
+}
+function ManageMember (index, id, type) 
+{
+    $('#id').remove();
+    $('<input>').attr({type:'hidden', id:'id', name:'id', value: ''+ Array_Member[index].id +''}).appendTo('form');
+    id_country = Array_Member[index].member_country;
+    $("#MemberModalLabel").html(type == 1 ? "<i class='icon left fas fa-city'></i>Detalle de Empresa" : "<i class='icon left fas fa-city'></i>Editar Empresa");
+    $('#member_name').val(Array_Member[index].member_name);    
+    $('#code').val(Array_Member[index].member_code);    
+    $('#fantasy_name').val(Array_Member[index].member_fantasy_name);    
+    $('#legal_representative').val(Array_Member[index].member_legal_representative);    
+    $('#document_type').val(Array_Member[index].member_document_type).trigger('change');    
+    $('#rif_number').val(Array_Member[index].rif_number.split('-')[0]);    
+    $('#rif_code').val(Array_Member[index].rif_number.split('-')[1]);    
+    $('#phone').val(Array_Member[index].member_phone);    
+    $('#email').val(Array_Member[index].member_email);   
+    $('#country').val(Array_Member[index].member_country).trigger('change');
+    GetState(Array_Member[index].member_country.toString(),'state', Array_Member[index].member_state.toString());
+    GetCity(Array_Member[index].member_state.toString(),'city,municipality', Array_Member[index].member_city.toString(), Array_Member[index].member_municipality.toString());
+    GetParish(Array_Member[index].member_municipality.toString(), "parish", Array_Member[index].member_parish.toString());
+    $('#urbanization').val(Array_Member[index].member_urbanization);    
+    $('#postal_code').val(Array_Member[index].member_postal_code);    
+    $('#floor').val(Array_Member[index].member_floor);    
+    $('#work_place').val(Array_Member[index].member_workplace);    
+    $('.frmMember').prop('disabled', type == 1 ? true : false);
+    $('#BtnMember-Content').prop('hidden', type == 1 ? true : false);
+    $('#MemberModal').modal('show');
+}
+function AddAgency (id)
+{
+    $.ajax({
+        url  : '/PARAMETERS/FillDragAndDrop',
+        type : 'POST',
+        data : {id:id, table:'member'},
+    })
+    .done(function(response){
+        var Array_available = response.available;
+        var Array_assigned  = response.assigned;
+        for (var j = 0; j < Array_available.length; j++) {
+            $('#pool').append("<div id='"+ Array_available[j].id +"' class='box-drop'>"+ Array_available[j].agency_name +"</div>");
+        }
+        for (var i = 0; i < Array_assigned.length; i++) {
+            $('#drop').append("<div id='"+ Array_assigned[i].id +"' class='box-drop'>"+ Array_assigned[i].agency_name +"</div>");
+        }
+        ApplyFormats();
+        $('#id').remove();
+        $('<input>').attr({type:'hidden', id:'id', name:'id', value: ''+ id +''}).appendTo('#drag-content');
+        $("#AgencyMemberModalLabel").html("<i class='icon left fas fa-store'></i> "+"Asignación de Agencias");
+        $("#AgencyMemberModal").modal("show");
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+    });
+}
+function StoreMember ()
+{
+    var form = $('#frmMember');
+    form.validate({
+        errorPlacement: function errorPlacement(error, element) 
+        {
+            if((element.hasClass('select2') || element.hasClass('MultiSelect2')) && element.next('.select2-container').length) {
+                error.insertAfter(element.next('.select2-container'));
+            }else if(element[0].classList[2] == "RifCode"){
+                return true;
+            }else{
+                error.insertAfter(element);
+            }
+        }
+    });
+    if(form.valid() == true){
+        $.ajax({
+            url  : '/MEMBER/StoreMember',
+            type : 'POST',
+            data : form.serialize(),
+        })
+        .done(function(response){
+            if(response.code == 200){
+                Swal.fire(response.message, '', 'success')
+                    .then(() => {
+                        id_country = null;
+                        Load_Table_Member();
+                        $('#MemberModal').modal('toggle');
+                        clean_modals('frmMember');
+                    });
+            }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+        });
+    }
+}
+function ChangeStatusMember (id, action)
+{
+    $.ajax({
+        url  : '/PARAMETERS/ChangeStatus',
+        type : 'POST',
+        data : {id:id, table:'member', status:action},
+    })
+    .done(function(response){
+        if(response.code == 200){
+            Swal.fire(response.message, '', 'success')
+                .then(() => {
+                    Load_Table_Member();
+                });
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+    });
+}
+</script>

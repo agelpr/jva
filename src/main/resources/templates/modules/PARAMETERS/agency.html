@@ -1,0 +1,198 @@
+<div class="card">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-naturales" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="card-header d-flex justify-content-between flex-wrap">
+                        <h5 class="mb-3 mb-sm-0">Gestión de Agencia</h5>
+                        <button class="btn btn-primary new " id="btnNew" th:text="#{CREATENEW}" th:disabled="${Actions.indexOf('Create') < 0}" th:hidden="${Actions.indexOf('Create') < 0}"></button>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 p-4 pb-5">
+                        <table id="table_AGENCY" class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Agencia</th>                                
+                                    <th scope="col">Teléfono</th>
+                                    <th scope="col">Correo</th>  
+                                    <th scope="col">Acciones</th>                                
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="layouts/content.html :: AgencyModal"></th:block>
+<script type="text/javascript" th:inline="javascript">
+var Array_Agency  = [];
+var id_country    = null;
+var Actions       = [[${Actions}]];
+$(document).ready( function () {
+    Load_Table_Agency();
+    $('#AgencyModal').modal({
+        backdrop: 'static',
+        keyboard: false,
+        show: false
+    });
+    $('#btnNew').on('click', function (){
+        $("#AgencyModalLabel").html("<i class='icon left fas fa-store'></i> "+"Creación de Agencia");
+        $('#BtnAgency-Content').prop('hidden', false);
+        $("#AgencyModal").modal("show");
+    });
+    $('#country').on('change', function() {
+        $('#state').empty().append('<option value="" selected> Seleccione...</option>');
+        $('#city').empty().append('<option value="" selected> Seleccione...</option>');
+        $('#municipality').empty().append('<option value="" selected> Seleccione...</option>');
+        $('#parish').empty().append('<option value="" selected> Seleccione...</option>');
+        if($(this).val() != '' && id_country != $(this).val()){
+            GetState($(this).val(),'state','');
+        }
+    });
+});
+function Load_Table_Agency ()
+{
+    $('#table_AGENCY').DataTable({
+        processing: false,
+        ordering  : true,
+        select    : false,
+        destroy   : true,
+        bInfo     : false,
+        responsive: true,
+        language  : {"url": dataTableLang},
+        ajax: 
+        {
+            url: "/PARAMETERS/Records",
+            type: "POST",
+            data: {table:'agency'},
+            dataSrc: function(data) 
+            {
+                Array_Agency = data;
+                return data;
+            }
+        },
+        order       : [0, 'asc'],
+        "columnDefs": [
+            {
+                "targets": [1,2,3],
+                "orderable": false
+            }
+        ],
+        pageLength : 10,
+        lengthMenu : [10, 20, 25],
+        columns: [
+            {data: 'agency_name'  , className: 'text-center', defaultContent: ''},
+            {data: 'agency_phone' , className: 'text-center', defaultContent: ''},
+            {data: 'agency_email' , className: 'text-center', defaultContent: ''},
+            {
+                data: null,
+                searchable: false,
+                className: "text-center btn-admin",
+                render: function (data, type, row, index) {
+                    var btn     = "";
+                    if(Actions.length > 0){
+                        btn += '<div class="btn-group">';
+                        btn += '<button class="btn btn-secondary btn-admin btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">';
+                        btn += '<i class="fas fa-cog"></i>';
+                        btn += '</button>';
+                        btn += '<ul class="dropdown-menu">';
+                        if(data.agency_status == true){
+                            btn += '<li><a href="#" onClick="ManageAgency(' + index.row + ',' + data.id + ',' + 1 + ');" class="dropdown-item"'+ GetActions('View') +'>Ver Detalle</a></li>';
+                            btn += '<li><a href="#" onClick="ManageAgency(' + index.row + ',' + data.id + ',' + 2 + ');" class="dropdown-item"'+ GetActions('Edit') +'>Editar</a></li>';
+                            btn += '<li><a href="#" onClick="ChangeStatusAgency(' + data.id + ',' + false + ');" class="dropdown-item"'+ GetActions('Edit') +'>Eliminar</a></li>';
+                        }else{
+                            btn += '<li><a href="#" onClick="ChangeStatusAgency(' + data.id + ',' + true + ');" class="dropdown-item"'+ GetActions('Edit') +'>Habilitar</a></li>';
+                        }
+                        btn += '</ul>';
+                        btn += '</div>';
+                    }
+                    return btn;
+                }
+            }
+        ]
+    });
+}
+function ManageAgency (index, id, type) 
+{
+    $('#id').remove();
+    $('<input>').attr({type:'hidden', id:'id', name:'id', value: ''+ Array_Agency[index].id +''}).appendTo('form');
+    id_country = Array_Agency[index].agency_country;
+    $("#AgencyModalLabel").html(type == 1 ? "<i class='icon left fas fa-store'></i>Detalle de Agencia" : "<i class='icon left fas fa-store'></i>Editar Agencia");
+    $('#agency_name').val(Array_Agency[index].agency_name);    
+    $('#code').val(Array_Agency[index].agency_code);    
+    $('#legal_representative').val(Array_Agency[index].agency_legal_representative);    
+    $('#phone').val(Array_Agency[index].agency_phone);    
+    $('#email').val(Array_Agency[index].agency_email);   
+    $('#country').val(Array_Agency[index].agency_country).trigger('change');
+    GetState(Array_Agency[index].agency_country.toString(),'state', Array_Agency[index].agency_state.toString());
+    GetCity(Array_Agency[index].agency_state.toString(),'city,municipality', Array_Agency[index].agency_city.toString(), Array_Agency[index].agency_municipality.toString());
+    GetParish(Array_Agency[index].agency_municipality.toString(), "parish", Array_Agency[index].agency_parish.toString());
+    $('#urbanization').val(Array_Agency[index].agency_urbanization);    
+    $('#postal_code').val(Array_Agency[index].agency_postal_code);    
+    $('#floor').val(Array_Agency[index].agency_floor);    
+    $('#work_place').val(Array_Agency[index].agency_workplace);    
+    $('#member').val(Array_Agency[index].id_members).trigger('change');    
+    $('.frmAgency').prop('disabled', type == 1 ? true : false);
+    $('#BtnAgency-Content').prop('hidden', type == 1 ? true : false);
+    $('#AgencyModal').modal('show');
+}
+function StoreAgency ()
+{
+    var form = $('#frmAgency');
+    form.validate({
+        errorPlacement: function errorPlacement(error, element) 
+        {
+            if((element.hasClass('select2') || element.hasClass('MultiSelect2')) && element.next('.select2-container').length) {
+                error.insertAfter(element.next('.select2-container'));
+            }else if(element[0].classList[2] == "RifCode"){
+                return true;
+            }else{
+                error.insertAfter(element);
+            }
+        }
+    });
+    if(form.valid() == true){
+        $.ajax({
+            url  : '/AGENCY/StoreAgency',
+            type : 'POST',
+            data : form.serialize(),
+        })
+        .done(function(response){
+            if(response.code == 200){
+                Swal.fire(response.message, '', 'success')
+                    .then(() => {
+                        id_country = null;
+                        Load_Table_Agency();
+                        $('#AgencyModal').modal('toggle');
+                        clean_modals('frmAgency');
+                    });
+            }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+        });
+    }
+}
+function ChangeStatusAgency (id, action)
+{
+    $.ajax({
+        url  : '/PARAMETERS/ChangeStatus',
+        type : 'POST',
+        data : {id:id, table:'agency', status:action},
+    })
+    .done(function(response){
+        if(response.code == 200){
+            Swal.fire(response.message, '', 'success')
+                .then(() => {
+                    Load_Table_Agency();
+                });
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+    });
+}
+</script>

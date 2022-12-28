@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="LATIN-1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="js/jquery/jquery-3.6.0.min.js"></script>
+
+        <!-- Place favicon.ico in the root directory -->
+        <link rel="apple-touch-icon" sizes="180x180" th:href="@{img/icon.png}">
+        <link rel="icon" type="image/png" sizes="32x32" th:href="@{img/icon.png}">
+        <link rel="mask-icon" color="#5bbad5" th:href="@{img/icon.png}">
+
+        <!-- CSS only -->
+        <!-- <link rel="stylesheet" href="css/mdb/mdb.min.css"> -->
+        <link rel="stylesheet" href="css/boostrap_css/bootstrap.min.css" >
+        <link rel="stylesheet" href="css/datatables/datatables.min.css" type="text/css" >
+        <link rel="stylesheet" href="css/datatables/rowGroup.dataTables.min.css" type="text/css" >
+        <link rel="stylesheet" href="css/fontawesome/all.min.css" >
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/select2.min.css">
+        <link rel="stylesheet" href="css/main.css">
+        <link rel="stylesheet" href="css/fonts/firstcore/firstcore.css">
+        <link rel="stylesheet" href="css/fonts/pos/pos.css">
+        <link rel="stylesheet" href="css/toastr/toastr.min.css">
+        <link rel="stylesheet" href="css/sweetalert2/sweetalert2.min.css">
+        <link rel="stylesheet" href="css/datepicker/bootstrap-datepicker.css">
+        <link rel="stylesheet" href="css/daterangepicker/daterangepicker.css">
+        <link rel="stylesheet" href="css/jquerySteps/jquery.steps.css">
+        <link rel="stylesheet" href="css/jquery/jquery-ui.min.css">
+        <link rel="stylesheet" href="css/WaitMe/waitMe.min.css">
+        <link rel="stylesheet" href="css/datatables/buttons.dataTables.min.css">
+        <link rel="stylesheet" media="all" href="css/maps/jquery-jvectormap.css"/>
+        <link rel="stylesheet" href="css/owl/owl.carousel.min.css">
+        <link rel="stylesheet" href="css/iconpicker/iconpicker.min.css">
+    <!-- <link rel="stylesheet" href="css/mein.css"> -->
+
+
+        <!-- JavaScript Bundle with Popper -->
+        <script src="js/datatables/datatables.min.js"></script>
+        <script src="js/fontAwesome/brands.min.js"></script>
+        <script src="js/boostrap/bootstrap.bundle.min.js"></script>
+        <script src="js/fontAwesome/brands.min.js"></script>
+        <script src="js/jqueryValidate/jquery.validate.min.js"></script>
+        <script src="js/inputmask/jquery.inputmask.js"></script>
+        <script src="js/inputmask/jquery.maskMoney.min.js"></script>
+        <script src="js/inputmask/jquery.MaskPhone.min.js"></script>
+        <script src="js/alphaNum/jquery.alphanum.js"></script>
+        <script src="js/jqueryValidate/messages_es.js"></script>
+        <script src="js/select2.min.js"></script>
+        <script src="js/sweetalert2/sweetalert2.min.js"></script>
+        <script src="js/toastr/toastr.min.js"></script>
+        <script src="js/main.js"></script>
+        <!-- <script src="js/model-viewer.js" type="module"></script> -->
+        <!-- <script src="js/mdb/mdb.min.js"></script> -->
+        <script src="js/jquery/jquery-ui.min.js"></script>
+        <script src="js/datepicker/bootstrap-datepicker.js"></script>
+        <script src="js/daterangepicker/moment.min.js"></script>
+        <script src="js/daterangepicker/daterangepicker.js"></script>
+        <script src="js/jquerySteps/jquery.steps.js"></script>
+        <script src="js/WaitMe/waitMe.min.js"></script>
+        <script src="js/datatables/dataTables.buttons.min.js"></script>
+        <script src="js/datatables/jszip.min.js"></script>
+        <script src="js/datatables/pdfmake.min.js"></script>
+        <script src="js/datatables/vfs_fonts.js"></script>
+        <script src="js/datatables/buttons.html5.min.js"></script>
+        <script src="js/chart/chart.js"></script>
+        <script src="js/owl/owl.carousel.min.js"></script>
+        <script src="js/iconpicker/iconpicker.min.js"></script>
+
+        <script src="js/maps/jquery-jvectormap.js"></script>
+        <script src="js/maps/jquery-mousewheel.js"></script>    
+        <script src="js/maps/jvectormap.js"></script>    
+        <script src="js/maps/abstract-element.js"></script>
+        <script src="js/maps/abstract-canvas-element.js"></script>
+        <script src="js/maps/abstract-shape-element.js"></script>    
+        <script src="js/maps/svg-element.js"></script>
+        <script src="js/maps/svg-group-element.js"></script>
+        <script src="js/maps/svg-canvas-element.js"></script>
+        <script src="js/maps/svg-shape-element.js"></script>
+        <script src="js/maps/svg-path-element.js"></script>
+        <script src="js/maps/svg-circle-element.js"></script>    
+        <script src="js/maps/vml-element.js"></script>
+        <script src="js/maps/vml-group-element.js"></script>
+        <script src="js/maps/vml-canvas-element.js"></script>
+        <script src="js/maps/vml-shape-element.js"></script>
+        <script src="js/maps/vml-path-element.js"></script>
+        <script src="js/maps/vml-circle-element.js"></script>    
+        <script src="js/maps/map-object.js"></script>
+        <script src="js/maps/region.js"></script>
+        <script src="js/maps/marker.js"></script>    
+        <script src="js/maps/vector-canvas.js"></script>
+        <script src="js/maps/simple-scale.js"></script>
+        <script src="js/maps/numeric-scale.js"></script>
+        <script src="js/maps/ordinal-scale.js"></script>
+        <script src="js/maps/color-scale.js"></script>
+        <script src="js/maps/data-series.js"></script>
+        <script src="js/maps/proj.js"></script>
+        <script src="js/maps/map.js"></script>
+    
+        <script src="js/maps/jquery-jvectormap-ve-mill-en.js"></script>
+        
+        <title th:text="${@environment.getProperty('spring.application.name')}"></title>
+    </head>
+    <th:block th:if="${page == 'login'}">
+        <body th:replace="login.html :: login"></body>
+    </th:block>
+    <th:block th:if="${page == 'home'}">
+        <body>
+        <body id="LoadingContent" oncontextmenu="return false;">
+            <div class="page-wrapper">
+                <div class="page-body-wrapper">
+                    <div th:replace="layouts/sidebar.html :: sidebar"></div>
+                    <div class="page-body">
+                        <div th:replace="layouts/header.html :: header"></div>
+                        <div class="container-fluid p-0" id="content"></div>
+                    </div>
+                    <div th:replace="layouts/footer.html :: footer"></div>
+                </div>
+            </div>
+            <script type="text/javascript">
+                var translation    = '[[${session.Lang}]]';
+                var current_page   = '[[${session.current_page}]]';
+                var dark_mode      = '[[${session.DarkMode}]]';
+                var ChangePass     = '[[${session.CHNP}]]';
+                var dataTableLang  = "js/datatables/" + translation.replace(/['"]+/g, '') + ".json";
+                var labels = {
+                    current   : "current step:",
+                    pagination: "Pagination",
+                    finish    : '[[#{FINISH}]]',
+                    next      : '[[#{NEXT}]]',
+                    previous  : '[[#{PREVIOUS}]]',
+                    loading   : '[[#{LOADING}]]'
+                };
+                var translation_msg = {
+                    "very_weak"           : '[[#{MSG_VERY_WEAK}]]',
+                    "weak"                : '[[#{MSG_WEAK}]]',
+                    "medium"              : '[[#{MSG_MEDIUM}]]',
+                    "average"             : '[[#{MSG_AVERAGE}]]',
+                    "strong"              : '[[#{MSG_STRONG}]]',    
+                    "pass_not_match"      : '[[#{MSG_PASS_NOT_MATCH}]]',    
+                    "confirmed"           : '[[#{MSG_CONFIRMED}]]',    
+                }
+                $(function () {
+                    IdleLogout();
+                    $('#ChangePassModal').modal({
+                        backdrop: 'static',
+                        keyboard: false,
+                        show: false
+                    });
+                    $(".menu a.ajax").on('click', function () {
+                        $('.nav-move').removeClass('active');
+                        $('.nav-move').parent().parent().parent().removeClass('active-accordion');
+                        $(this).parent().parent().parent().addClass('active-accordion');
+                        $(this).addClass('active');
+                        link = $(this).attr("href");
+                        page = $(this).attr("id");
+                        $.ajax({
+                            url: link,
+                            dataType: "html"
+                        })
+                        .done(function (html) {
+                            current_page = page;
+                            if(html.search(/login-box/) < 0){
+                                $("#content").empty().append(html);
+                                ApplyFormats();
+                            }else{
+                                LogOut();
+                            }
+                        })
+                        .fail(function(jqXHR, textStatus, errorThrown) {
+                            Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+                        });
+                        return false;
+                    });
+                    window.oncontextmenu = function () {
+                        return false;
+                    }
+                    $(document).keydown(function (event) {
+                        if (event.keyCode == 123) {
+                            return false;
+                        }
+                        else if ((event.ctrlKey && event.shiftKey && event.keyCode == 73) || (event.ctrlKey && event.shiftKey && event.keyCode == 74)) {
+                            return false;
+                        }
+                    });
+                    if (dark_mode == '1') {
+                        $('.mode i').toggleClass("fa-moon").toggleClass("fa-lightbulb");
+                        $('body').toggleClass("dark-only");
+                    }
+                    if(ChangePass == 'true'){
+                        $('#ChangePassModal').modal('show');
+                    }
+                    BtnRedirect(current_page);
+                });
+                 (function ($) {
+                     "use strict";
+                     $(".mobile-toggle").click(function () {
+                         $(".nav-menus").toggleClass("open");
+                     });
+
+                 })(jQuery);
+            </script>
+            <th:block th:replace="layouts/content.html :: ChangePassModal"></th:block>
+        </body>
+    </th:block>
+</html>

@@ -1,0 +1,788 @@
+<!-- Modal Grupos-->
+<div class="modal fade" id="GroupsModal" tabindex="-1" aria-labelledby="GroupsModal" aria-hidden="true" th:fragment="GroupsModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="GroupsModalLabel"><i class='fas fa-plus-square'></i> Registrar Grupo</h5>
+                <button type="button" class="btn-close" onclick="clean_modals('frmGroups', 'view')" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frmGroups" onSubmit="false" autocomplete="off">
+                    <div id="frmContent" class="row row-cols-1 row-cols-md-1">
+                        <div class="col mb-2">
+                            <label for="group_name">Descripción</label>
+                            <input type="text" id="group_name" name="group_name" class="form-control alphaSpecial frmGroups" maxlength="100" required="true">
+                        </div>
+                    </div>
+                    <div class="mx-auto col-md-3 mb-4 mt-2" id="BtnGroups-Content">
+                        <button type="button" id="save" class="btn btn-primary col-12" onclick="StoreGroup()">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Gestion Grupos - Permisos-->
+<div class="modal fade" id="PermitsModal" tabindex="-1" aria-labelledby="PermitsModal" aria-hidden="true"  th:fragment="PermitsModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="PermitsModalLabel"></h5>
+                <button type="button" class="btn-close" onclick="CleanDrag()" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="title-drop bot">
+                    <input type="text" id="SearchPool" class="form-control alphanum" placeholder="Buscar..." onkeyup="SearchDnD(this.id, 'pool')" >
+                    <input type="text" id="SearchDrop" class="form-control alphanum" placeholder="Buscar..." onkeyup="SearchDnD(this.id, 'drop')" >
+                </div> 
+                <div class="arrows-droped">
+                    <i class="fas fa-long-arrow-alt-left"></i>
+                    <i class="fas fa-long-arrow-alt-right"></i>
+                </div>
+                <div class="title-drop">
+                    <h5 class="d-flex justify-content-between pe-3 ps-3">Lista de Permisos</h5>
+                    <h5 class="d-flex justify-content-between pe-3 ps-3">Permisos Asignados<input type="checkbox" id="CheckAll" value="true" class="form-check-input"></h5>
+                </div> 
+                <div id="drag-content" class="d-flex justify-content-between">
+                    <div class='dnd' id='pool'>
+                    </div>
+                    <div class='dnd' id='drop'>
+                    </div>
+                </div>               
+            </div>
+            <button type="button" class="btn btn-primary col-3 mx-auto mb-4" id="save_member" onclick="StorePermits();">Guardar</button>
+        </div>
+    </div>
+</div>
+<!-- Modal Gestion Empresas --->
+<div class="modal fade" id="CompanyModal" tabindex="-1" aria-labelledby="CompanyModal" aria-hidden="true" th:fragment="CompanyModal">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="CompanyModalLabel"></h5>
+                <button type="button" class="btn-close" onclick="clean_modals('frmCompany', 'view')" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frmCompany" onSubmit="false" autocomplete="off">
+                    <div id="frmContent" class="row row-cols-1 row-cols-md-3">                       
+                        <div class="col-md-8 mb-2">
+                            <label for="company_name">Razón Social</label><span class="required-label">*</span>
+                            <input type="text" id="company_name" name="company_name" class="form-control alphaSpecial frmCompany" maxlength="100" required="true">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label for="code">Código</label><span class="required-label">*</span>
+                            <input type="text" id="code" name="code" class="form-control numeric  frmCompany" maxlength="4" required="true">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label for="fantasy_name">Nombre de Fantasía</label><span class="required-label">*</span>
+                            <input type="text" id="fantasy_name" name="fantasy_name" class="form-control  alphaSpecial frmCompany" maxlength="100" required="true">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label for="legal_representative">Representante Legal</label><span class="required-label">*</span>
+                            <input type="text" id="legal_representative" name="legal_representative" class="form-control  alphaSpecial frmCompany" maxlength="100" required="true">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="document_type">Tipo de Documento</label><span class="required-label">*</span>
+                            <select id="document_type"  name="document_type" class="form-select select2  frmCompany" required="true">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:each="i : ${document_type.iterator()}" th:value="${i.getInt('id')}" th:text="${i.getString('description').split('-')[0].trim()}"></option>
+                            
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="rif_number">R.I.F.</label><span class="required-label">*</span>
+                            <div class="d-flex">
+                                <div class="col-md-9 me-3">
+                                    <input type="text" id="rif_number" name="rif_number" class="form-control numeric frmCompany" minlength="8" maxlength="8" required="true">
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="text" id="rif_code" name="rif_code" class="form-control numeric RifCode frmCompany" maxlength="1" required="true">
+                                </div>
+                            </div>
+                        </div>                                                 
+                        <div class="col mb-2">
+                            <label for="phone">Teléfono</label><span class="required-label">*</span>
+                            <input type="text" id="phone" name="phone" class="form-control phone  frmCompany" placeholder="Ej: (212) 123-4567" data-msg-minlength="Número de Teléfono Incorrecto" minlength="14" required="true" onblur="CheckFields(this.id, this.value, 2)">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="email">Correo Electrónico</label><span class="required-label">*</span>
+                            <input type="text" id="email" name="email" class="form-control email  frmCompany" maxlength="100" required="true">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="country">País</label><span class="required-label">*</span>
+                            <select id="country" name="country" class="form-select select2  frmCompany" required="true">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:each="i : ${country.iterator()}" th:value="${i.getInt('id')}" th:text="${i.getString('description')}"></option>
+                            </select>
+                        </div>                       
+                        <div class="col mb-2">
+                            <label for="state">Estado</label><span class="required-label">*</span>
+                            <select id="state" name="state" class="form-select select2  frmCompany" onchange="GetCity(this.value,'city,municipality','','')" required="true">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="city">Ciudad</label><span class="required-label">*</span>
+                            <select id="city" name="city" class="form-select select2 frmCompany" required="true">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="municipality">Municipio</label><span class="required-label">*</span>
+                            <select id="municipality"  name="municipality" class="form-select select2 frmCompany" onchange="GetParish(this.value,'parish','')" required="true">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="parish">Parroquia</label><span class="required-label">*</span>
+                            <select id="parish" name="parish" class="form-select select2 frmCompany" required="true">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="urbanization">Urbanización</label><span class="required-label">*</span>
+                            <input type="text" id="urbanization" name="urbanization" class="form-control alphanum frmCompany" maxlength="100" required="true">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="postal_code">Código Postal</label><span class="required-label">*</span>
+                            <input type="text" id="postal_code" name="postal_code" class="form-control numeric PostalCode frmCompany" minlength="4" maxlength="5" onkeyup="SearchPostalCode(this.id, this.value, 'frmCompany')" required="true">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="floor">Piso</label>
+                            <input type="text" id="floor" name="floor" class="form-control alphaSpecial frmCompany" maxlength="100">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="work_place">Local/Oficina</label>
+                            <input type="text" id="work_place" name="work_place" class="form-control alphaSpecial frmCompany" maxlength="100">
+                        </div>
+                    </div>
+                    <div class="mx-auto col-md-3 mb-4 mt-2" id="BtnCompany-Content">
+                        <button type="button" id="save" class="btn btn-primary col-12" onclick="StoreCompany()">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Gestion Miembros --->
+<div class="modal fade" id="MemberModal" tabindex="-1" aria-labelledby="MemberModal" aria-hidden="true" th:fragment="MemberModal">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="MemberModalLabel"></h5>
+                <button type="button" class="btn-close" onclick="clean_modals('frmMember', 'view')" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frmMember" onSubmit="false" autocomplete="off">
+                    <div id="frmContent" class="row row-cols-1 row-cols-md-3">                       
+                        <div class="col-md-8 mb-2">
+                            <label for="member_name">Razón Social</label><span class="required-label">*</span>
+                            <input type="text" id="member_name" name="member_name" class="form-control alphaSpecial frmMember" maxlength="100" required="true">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label for="code">Código</label><span class="required-label">*</span>
+                            <input type="text" id="code" name="code" class="form-control numeric  frmMember" maxlength="4" required="true">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label for="fantasy_name">Nombre de Fantasía</label><span class="required-label">*</span>
+                            <input type="text" id="fantasy_name" name="fantasy_name" class="form-control  alphaSpecial frmMember" maxlength="100" required="true">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label for="legal_representative">Representante Legal</label><span class="required-label">*</span>
+                            <input type="text" id="legal_representative" name="legal_representative" class="form-control  alpha frmMember" maxlength="100" required="true">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="document_type">Tipo de Documento</label><span class="required-label">*</span>
+                            <select id="document_type"  name="document_type" class="form-select select2  frmMember" required="true">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:each="i : ${document_type.iterator()}" th:value="${i.getInt('id')}" th:text="${i.getString('description').split('-')[0].trim()}"></option>
+                            
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="rif_number">R.I.F.</label><span class="required-label">*</span>
+                            <div class="d-flex">
+                                <div class="col-md-9 me-3">
+                                    <input type="text" id="rif_number" name="rif_number" class="form-control numeric frmMember" minlength="8" maxlength="8" required="true">
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="text" id="rif_code" name="rif_code" class="form-control numeric RifCode frmMember" maxlength="1" required="true">
+                                </div>
+                            </div>
+                        </div>                                                 
+                        <div class="col mb-2">
+                            <label for="phone">Teléfono</label><span class="required-label">*</span>
+                            <input type="text" id="phone" name="phone" class="form-control phone  frmMember" placeholder="Ej: (212) 123-4567" data-msg-minlength="Número de Teléfono Incorrecto" minlength="14" required="true" onblur="ValidatePhoneFormat(this.value, this.id);">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="email">Correo Electrónico</label><span class="required-label">*</span>
+                            <input type="text" id="email" name="email" class="form-control email  frmMember" maxlength="100" required="true">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="country">País</label><span class="required-label">*</span>
+                            <select id="country" name="country" class="form-select select2  frmMember" required="true">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:each="i : ${country.iterator()}" th:value="${i.getInt('id')}" th:text="${i.getString('description')}"></option>
+                            </select>
+                        </div>                       
+                        <div class="col mb-2">
+                            <label for="state">Estado</label><span class="required-label">*</span>
+                            <select id="state" name="state" class="form-select select2  frmMember" onchange="GetCity(this.value,'city,municipality','','')" required="true">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="city">Ciudad</label><span class="required-label">*</span>
+                            <select id="city" name="city" class="form-select select2 frmMember" required="true">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="municipality">Municipio</label><span class="required-label">*</span>
+                            <select id="municipality"  name="municipality" class="form-select select2 frmMember" onchange="GetParish(this.value,'parish','')" required="true">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="parish">Parroquia</label><span class="required-label">*</span>
+                            <select id="parish" name="parish" class="form-select select2 frmMember" required="true">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="urbanization">Urbanización</label><span class="required-label">*</span>
+                            <input type="text" id="urbanization" name="urbanization" class="form-control alphanum frmMember" maxlength="100" required="true">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="postal_code">Código Postal</label><span class="required-label">*</span>
+                            <input type="text" id="postal_code" name="postal_code" class="form-control numeric PostalCode frmMember" minlength="4" maxlength="5" onkeyup="SearchPostalCode(this.id, this.value, 'frmMember')" required="true">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="floor">Piso</label>
+                            <input type="text" id="floor" name="floor" class="form-control alphaSpecial frmMember" maxlength="100">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="work_place">Local/Oficina</label>
+                            <input type="text" id="work_place" name="work_place" class="form-control alphaSpecial frmMember" maxlength="100">
+                        </div>
+                    </div>
+                    <div class="mx-auto col-md-3 mb-4 mt-2" id="BtnMember-Content">
+                        <button type="button" id="save" class="btn btn-primary col-12" onclick="StoreMember()">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Gestion Agencia --->
+<div class="modal fade" id="AgencyModal" tabindex="-1" aria-labelledby="AgencyModal" aria-hidden="true" th:fragment="AgencyModal">
+    <div class="modal-dialog  modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="AgencyModalLabel"></h5>
+                <button type="button" class="btn-close" onclick="clean_modals('frmAgency', 'view')" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frmAgency" onSubmit="false" autocomplete="off">
+                    <div id="frmContent" class="row row-cols-1 row-cols-md-3">                       
+                        <div class="col-md-8 mb-2">
+                            <label for="agency_name">Nombre de la Agencia</label><span class="required-label">*</span>
+                            <input type="text" id="agency_name" name="agency_name" class="form-control alphaSpecial frmAgency" maxlength="100" required="true">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label for="code">Código</label><span class="required-label">*</span>
+                            <input type="text" id="code" name="code" class="form-control numeric  frmAgency" maxlength="4" required="true">
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label for="legal_representative">Representante Legal</label><span class="required-label">*</span>
+                            <input type="text" id="legal_representative" name="legal_representative" class="form-control  alpha frmAgency" maxlength="100" required="true">
+                        </div>                                               
+                        <div class="col mb-2">
+                            <label for="phone">Teléfono</label><span class="required-label">*</span>
+                            <input type="text" id="phone" name="phone" class="form-control phone  frmAgency" placeholder="Ej: (212) 123-4567" data-msg-minlength="Número de Teléfono Incorrecto" minlength="14" required="true" onblur="ValidatePhoneFormat(this.value, this.id);">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="email">Correo Electrónico</label><span class="required-label">*</span>
+                            <input type="text" id="email" name="email" class="form-control email  frmAgency" maxlength="100" required="true">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="country">País</label><span class="required-label">*</span>
+                            <select id="country" name="country" class="form-select select2  frmAgency" required="true">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:each="i : ${country.iterator()}" th:value="${i.getInt('id')}" th:text="${i.getString('description')}"></option>
+                            </select>
+                        </div>                       
+                        <div class="col mb-2">
+                            <label for="state">Estado</label><span class="required-label">*</span>
+                            <select id="state" name="state" class="form-select select2  frmAgency" onchange="GetCity(this.value,'city,municipality','','')" required="true">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="city">Ciudad</label><span class="required-label">*</span>
+                            <select id="city" name="city" class="form-select select2 frmAgency" required="true">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="municipality">Municipio</label><span class="required-label">*</span>
+                            <select id="municipality"  name="municipality" class="form-select select2 frmAgency" onchange="GetParish(this.value,'parish','')" required="true">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="parish">Parroquia</label><span class="required-label">*</span>
+                            <select id="parish" name="parish" class="form-select select2 frmAgency" required="true">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="urbanization">Urbanización</label><span class="required-label">*</span>
+                            <input type="text" id="urbanization" name="urbanization" class="form-control alphanum frmAgency" maxlength="100" required="true">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="postal_code">Código Postal</label><span class="required-label">*</span>
+                            <input type="text" id="postal_code" name="postal_code" class="form-control numeric PostalCode frmAgency" minlength="4" maxlength="5" onkeyup="SearchPostalCode(this.id, this.value, 'frmAgency')" required="true">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="floor">Piso</label>
+                            <input type="text" id="floor" name="floor" class="form-control alphaSpecial frmAgency" maxlength="100">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="work_place">Local/Oficina</label>
+                            <input type="text" id="work_place" name="work_place" class="form-control alphaSpecial frmAgency" maxlength="100">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="member">Empresa</label>
+                            <select class="form-select select2 frmAgency" id="member" name="member" required="true">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:each="i : ${member.iterator()}" th:value="${i.getInt('id')}" th:text="${i.getString('description')}"></option>
+                            </select>
+                        </div> 
+                    </div>
+                    <div class="mx-auto col-md-3 mb-4 mt-2" id="BtnAgency-Content">
+                        <button type="button" id="save" class="btn btn-primary col-12" onclick="StoreAgency()">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Gestion Empresas - Integrantes-->
+<div class="modal fade" id="MemberCompanyModal" tabindex="-1" aria-labelledby="MemberCompanyModal" aria-hidden="true"  th:fragment="MemberCompanyModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="MemberCompanyModalLabel"></h5>
+                <button type="button" class="btn-close" onclick="CleanDrag()" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="title-drop bot">
+                    <input type="text" id="SearchPool" class="form-control alphanum" placeholder="Buscar..." onkeyup="SearchDnD(this.id, 'pool')" >
+                    <input type="text" id="SearchDrop" class="form-control alphanum" placeholder="Buscar..." onkeyup="SearchDnD(this.id, 'drop')" >
+                </div> 
+                <div class="arrows-droped">
+                    <i class="fas fa-long-arrow-alt-left"></i>
+                    <i class="fas fa-long-arrow-alt-right"></i>
+                </div>
+                <div class="title-drop">
+                    <h5>Lista de Integrantes</h5>
+                    <h5>Integrantes Asignados</h5>
+                </div> 
+                <div id="drag-content" class="d-flex justify-content-between">
+                    <div class='dnd' id='pool'>
+                    </div>
+                    <div class='dnd' id='drop'>
+                    </div>
+                </div>               
+            </div>
+            <button type="button" class="btn btn-primary col-3 mx-auto mb-4" id="save_member" onclick="StoreDrop('id_company', 'company', 'MemberCompanyModal');">Guardar</button>
+        </div>
+    </div>
+</div>
+<!-- Modal Gestion Integrantes - Agencias-->
+<div class="modal fade" id="AgencyMemberModal" tabindex="-1" aria-labelledby="AgencyMemberModal" aria-hidden="true"  th:fragment="AgencyMemberModal">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="AgencyMemberModalLabel"></h5>
+                <button type="button" class="btn-close" onclick="CleanDrag()" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="title-drop bot">
+                    <input type="text" id="SearchPool" class="form-control alphanum" placeholder="Buscar..." onkeyup="SearchDnD(this.id, 'pool')" >
+                    <input type="text" id="SearchDrop" class="form-control alphanum" placeholder="Buscar..." onkeyup="SearchDnD(this.id, 'drop')" >
+                </div> 
+                <div class="arrows-droped">
+                    <i class="fas fa-long-arrow-alt-left"></i>
+                    <i class="fas fa-long-arrow-alt-right"></i>
+                </div>
+                <div class="title-drop">
+                    <h5>Lista de Agencias</h5>
+                    <h5>Agencias Asignadas</h5>
+                </div> 
+                <div id="drag-content" class="d-flex justify-content-between">
+                    <div class='dnd' id='pool'>
+                    </div>
+                    <div class='dnd' id='drop'>
+                    </div>
+                </div>               
+            </div>
+            <button type="button" class="btn btn-primary col-3 mx-auto mb-4" id="save_member" onclick="StoreDrop('id_member', 'member', 'AgencyMemberModal');">Guardar</button>
+        </div>
+    </div>
+</div>
+<!-- Modal Cambiar contraseña-->
+<div class="modal fade" id="ChangePassModal" tabindex="-1" aria-labelledby="ChangePassModal" aria-hidden="true"  th:fragment="ChangePassModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ChangePassModalLabel"><i class="icon left fas fa-key"></i> Cambio de contraseña</h5>
+            </div>
+            <div class="modal-body">
+                <form id="frmChangePass" onSubmit="false">
+                    <div class="row row-cols-1 row-cols-md-2">
+                        <div class="col mb-2">
+                            <label>Contraseña Nueva</label>
+                            <div class="col-sm-12">
+                                <div class="input-group">
+                                    <input type="password" id="PASS_NEW" name="PASS_NEW" class="form-control required" onkeyup="validate_pass(this)" minlength="5" maxlength="10">
+                                    <span class="input-group-text change">
+                                        <a href="javascript:showPass('password');">
+                                            <i id="icon_password" class="far fa-eye-slash" title="Mostrar"></i>
+                                        </a>
+                                    </span>
+                                </div>
+                            </div>
+                            <div id="password-strength-status"></div>
+                        </div>
+                        <div class="col mb-2">
+                            <label>Confirmar Contraseña</label>
+                            <div class="col-sm-12">
+                                <div class="input-group">
+                                    <input type="password" id="CONFIRM_PASSWORD" name="CONFIRM_PASSWORD" class="form-control required" onkeyup="validate_pass2(this)" minlength="5" maxlength="10"><input type="hidden" id="Iddata" name="Iddata" value="M%2BQ%2Fxbn2kis%3D" class="form-control">
+                                    <input type="text" id="mode" name="mode" class="form-control" value="savePass" hidden="">
+                                    <span class="input-group-text change">
+                                        <a href="javascript:show_confirm_password('password_confirmation');">
+                                            <i id="icon_password2" class="far fa-eye-slash" title="Mostrar"></i>
+                                        </a>
+                                    </span>
+                                </div>
+                                <ul class="pswd_info hidden_password m-0" id="passwordCriterion2"></ul>
+                            </div>
+                            <div class="hidden_password">
+                                <div id="password-strength-status2">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col mb-2">
+                            <ul class="pswd_info" id="passwordCriterion">
+                                <li data-criterion="length" class="invalid">La contraseña debe tener 8-10 caracteres</li>
+                                <li data-criterion="capital" class="invalid">La contraseña debe tener al menos una letra mayúscula</li>
+                                <li data-criterion="small" class="invalid">La contraseña debe tener al menos una letra minúscula</li>
+                                <li data-criterion="number" class="invalid">La contraseña debe tener al menos un número</li>
+                                <li data-criterion="special" class="invalid">La contraseña debe tener al menos un carácter especial</li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="save_password" onclick="SavePassword()" disabled>Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Mantenimiento-->
+<div class="modal fade" id="MaintenanceModal" tabindex="-1" aria-labelledby="MaintenanceModal" aria-hidden="true"  th:fragment="MaintenanceModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="MaintenanceModalLabel"><i class='fas fa-plus-square'></i> Crear maestro</h5>
+                <button type="button" class="btn-close" onclick="clean_modals('frmMaintenance')" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frmMaintenance" onSubmit="false" autocomplete="off">
+                    <div class="row row-cols-1 row-cols-md-1">
+                        <div class="col mb-2">
+                            <label>Descripción</label><span class="required-label">*</span>
+                            <input type="text" id="MasterDsc" name="MasterDsc" class="form-control required alphanum" maxlength="50">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <button type="button" class="btn btn-primary col-4 mx-auto mb-4" id="save_parent" onclick="SaveMaintenance('frmMaintenance', 'tb_table', 'MaintenanceModal')">Guardar</button>
+        </div>
+    </div>
+</div>
+<!-- Modal Mantenimiento Descripciones-->
+<div class="modal fade" id="MaintenanceDscModal" tabindex="-1" aria-labelledby="MaintenanceDscModal" aria-hidden="true"  th:fragment="MaintenanceDscModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="MaintenanceDscModalLabel"></h5>
+                <button type="button" class="btn-close" onclick="clean_modals('frmMaintenanceDsc')" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frmMaintenanceDsc" onSubmit="false" autocomplete="off">
+                    <div id="frmContent" class="row row-cols-1 row-cols-md-3">
+                        <div id="AltContent" class="col mb-2" hidden>
+                        </div>
+                        <div id="AltContent2" class="col mb-2" hidden>
+                        </div>
+                        <div id="PrincipalContent"class="col mb-2">
+                            <label>Descripción</label><span class="required-label">*</span>
+                            <input type="text" id="description" name="description" class="form-control required alphanum" maxlength="50">
+                        </div>
+                        <div id="SmallContent"class="col mb-2" hidden>
+                        </div>
+                    </div>
+                </form>
+                <div class="col-xs-12 col-sm-12 col-md-12 p-4 pb-5">
+                    <table id="table_CHILDRENS" class="table TableChildrens">
+                        <thead>
+                            <tr>
+                                <th scope="col">Descripción</th>                                
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <button type="button" class="btn btn-primary col-4 mx-auto mb-4" id="save_children">Guardar</button>
+        </div>
+    </div>
+</div>
+<!-- Modal Crear Usuario-->
+<div class="modal fade" id="UserModal" tabindex="-1" aria-labelledby="UserModal" aria-hidden="true"  th:fragment="UserModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="UserModalLabel"><i class="icon left fas fa-user"></i>Crear Usuario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="clean_modals('frmUser', 'view')" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frmUser" onSubmit="false" autocomplete="off">
+                    <div class="row row-cols-1 row-cols-sm-2">
+                        <!-- <div class="col mb-2">
+                            <label for="company">Empresa</label>
+                            <select class="form-select select2 FrmUsers" id="company" name="company" required="true">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:each="i : ${company.iterator()}" th:value="${i.getInt('id')}" th:text="${i.getString('description')}"></option>
+                            </select>
+                        </div> -->
+                        <div class="col mb-2">
+                            <label for="member">Empresa</label>
+                            <select class="form-select select2 FrmUsers" id="member" name="member" required="true">
+                            <!-- <select class="form-select select2 FrmUsers" id="member" name="member" required="true" onchange="FillSelect(this.value,'agency','agency','')"> -->
+                                <option value="" selected>Seleccione...</option>
+                                <option th:each="i : ${member.iterator()}" th:value="${i.getInt('id')}" th:text="${i.getString('description')}"></option>
+                            </select>
+                        </div>                
+                        <div class="col mb-2">
+                            <label for="agency">Agencia</label>
+                            <select class="form-select select2 FrmUsers" id="agency" name="agency">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>                     
+                        <div class="col-md-2">
+                            <label for="document_type">Tipo de Documento</label>
+                            <select class="form-select select2 FrmUsers" id="document_type" name="document_type" required="true">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:each="i : ${document_type.iterator()}" th:value="${i.getInt('id')}" th:text="${i.getString('description')}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-2">
+                            <label for="document_type">Documento</label><span class="required-label">*</span>
+                            <div class="d-flex">
+                                <div class="col">
+                                    <input type="text" id="document" name="document" class="form-control numeric FrmUsers" minlength="8" maxlength="8" required="true">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col mb-2 InputReadNames">
+                            <label for="first_name">Primer Nombre</label>
+                            <input type="text" id="first_name" name="first_name" class="form-control alphaSpecial FrmUsers UserNames" required="true" maxlength="100">
+                        </div>
+                        <div class="col mb-2 InputReadNames">
+                            <label for="second_name">Segundo Nombre</label>
+                            <input type="text" id="second_name" name="second_name" class="form-control alphaSpecial FrmUsers UserNames" maxlength="100">
+                        </div>
+                        <div class="col mb-2 InputReadNames">
+                            <label for="first_surname">Primer Apellido</label>
+                            <input type="text" id="first_surname" name="first_surname" class="form-control alphaSpecial FrmUsers UserNames" required="true"  maxlength="100">
+                        </div>
+                        <div class="col mb-2 InputReadNames">
+                            <label for="second_surname">Segundo Apellido</label>
+                            <input type="text" id="second_surname" name="second_surname" class="form-control alphaSpecial FrmUsers UserNames" maxlength="100">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="email">Correo</label>
+                            <input type="text" id="email" name="email" class="form-control email FrmUsers" maxlength="100" required="true" onblur="CheckFields(this.id, this.value, 1)">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="phone">Teléfono</label>
+                            <input type="text" id="phone" name="phone" class="form-control phone FrmUsers" placeholder="Ej: (212) 123-4567" required="true" data-msg-minlength="Número de Teléfono Incorrecto" minlength="14" onblur="CheckFields(this.id, this.value, 2)">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="user_group">Grupo de usuario</label>
+                            <select id="user_group" name="user_group" class="form-select select2 FrmUsers" required="true">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:each="i : ${user_group.iterator()}" th:value="${i.getInt('id')}" th:text="${i.getString('description')}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" id="BtnUser-Content">
+                <button type="button" class="btn btn-primary col-3 mx-auto" id="store_user" onClick="StoreUser()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Modulos-->
+<div class="modal fade" id="ModuleModal" tabindex="-1" aria-labelledby="ModuleModal" aria-hidden="true" th:fragment="ModuleModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ModuleModalLabel"><i class='fas fa-plus-square'></i> Registrar Módulo</h5>
+                <button type="button" class="btn-close" onclick="clean_modals('frmModule', 'view')" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frmModule" onSubmit="false" autocomplete="off">
+                    <div id="frmContent" class="row row-cols-1 row-cols-sm-2">
+                        <div class="col mb-2">
+                            <label for="module_code">Código</label>
+                            <input type="text" id="module_code" name="module_code" class="form-control alphanum frmModule" maxlength="100" required="true">
+                        </div>
+                        <div class="col mb-2">
+                            <label for="module_icon">Icono</label><span class="required-label">*</span>
+                            <div class="input-group"> 
+                                <input type="text" id="module_icon" name="module_icon" class="form-control iconPicker frmModule" value="fas fa-archive" maxlength="100" required="true">
+                                <span class="input-group-addon"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mb-2">
+                            <label for="module_name">Descripción</label>
+                            <input type="text" id="module_name" name="module_name" class="form-control frmModule" maxlength="100" required="true">
+                        </div>
+                    </div>
+                    <div class="mx-auto col-md-3 mb-4 mt-2" id="BtnModule-Content">
+                        <button type="button" id="save" class="btn btn-primary col-12" onclick="StoreModule()">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal SubModulos-->
+<div class="modal fade" id="SubModuleModal" tabindex="-1" aria-labelledby="SubModuleModal" aria-hidden="true" th:fragment="SubModuleModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="SubModuleModalLabel"><i class='fas fa-plus-square'></i> Registrar Sub-Módulo</h5>
+                <button type="button" class="btn-close" onclick="clean_modals('frmSubModule', 'view')" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frmSubModule" onSubmit="false" autocomplete="off">
+                    <div id="frmContent" class="row row-cols-1 row-cols-sm-2">
+                        <div class="col mb-2">
+                            <label for="module_name">Módulo</label>
+                            <select id="module_name" name="module_name" class="form-select select2 frmSubModule" required="true">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:each="i : ${modules.iterator()}" th:value="${i.getInt('id')}" th:text="${i.getString('description')}"></option>
+                            </select>
+                        </div>
+                        <div class="col mb-2">
+                            <label for="submodule_code">Código</label>
+                            <input type="text" id="submodule_code" name="submodule_code" class="form-control alphanum frmSubModule" maxlength="100" required="true">
+                        </div>
+                        <div class="col-md-12 mb-2">
+                            <label for="submodule_name">Descripción</label>
+                            <input type="text" id="submodule_name" name="submodule_name" class="form-control frmSubModule" maxlength="100" required="true">
+                        </div>
+                    </div>
+                    <div class="mx-auto col-md-3 mb-4 mt-2" id="BtnSubModule-Content">
+                        <button type="button" id="save" class="btn btn-primary col-12" onclick="StoreSubModule()">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Dispositivos-->
+<div class="modal fade" id="DeviceModal" tabindex="-1" aria-labelledby="DeviceModal" aria-hidden="true" th:fragment="DeviceModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="DeviceModalLabel"><i class='fas fa-plus-square'></i> Registrar Dispositivo</h5>
+                <button type="button" class="btn-close" onclick="clean_modals('frmDevice', 'view')" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frmDevice" onSubmit="false" autocomplete="off">
+                    <div id="frmContent" class="row row-cols-1 row-cols-sm-2">
+                        <div class="col mb-2">
+                            <label for="member">Empresa</label>
+                            <select class="form-select select2 frmDevice" id="member" name="member" required="true">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:each="i : ${member.iterator()}" th:value="${i.getInt('id')}" th:text="${i.getString('description')}"></option>
+                            </select>
+                        </div>                
+                        <div class="col mb-2">
+                            <label for="agency">Agencia</label>
+                            <select class="form-select select2 frmDevice" id="agency" name="agency">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div>   
+                        <div class="col-md-12 mb-2">
+                            <label for="device_serial">Serial</label>
+                            <input type="text" id="device_serial" name="device_serial" class="form-control numeric frmDevice" maxlength="100" required="true">
+                        </div>
+                    </div>
+                    <div class="mx-auto col-md-3 mb-4 mt-2" id="BtnDevice-Content">
+                        <button type="button" id="save" class="btn btn-primary col-12" onclick="StoreDevice()">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal Cuentas-->
+<div class="modal fade" id="AccountModal" tabindex="-1" aria-labelledby="AccountModal" aria-hidden="true" th:fragment="AccountModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="AccountModalLabel"><i class='fas fa-plus-square'></i> Registrar Dispositivo</h5>
+                <button type="button" class="btn-close" onclick="clean_modals('frmAccount', 'view')" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="frmAccount" onSubmit="false" autocomplete="off">
+                    <div id="frmContent" class="row row-cols-1 row-cols-sm-2">
+                        <div class="col mb-2">
+                            <label for="member">Empresa</label>
+                            <select class="form-select select2 frmAccount" id="member" name="member" required="true">
+                                <option value="" selected>Seleccione...</option>
+                                <option th:each="i : ${member.iterator()}" th:value="${i.getInt('id')}" th:text="${i.getString('description')}"></option>
+                            </select>
+                        </div>                
+                        <div class="col mb-2">
+                            <label for="agency">Agencia</label>
+                            <select class="form-select select2 frmAccount" id="agency" name="agency" required="true">
+                                <option value="" selected>Seleccione...</option>
+                            </select>
+                        </div> 
+                        <div class="col-md-12 mb-2">
+                            <label for="account_number">Cuenta</label>
+                            <input type="text" id="account_number" name="account_number" class="form-control numeric frmAccount" minlength="20" maxlength="20" required="true" onblur="ValidateAccNumber(this)">
+                        </div>
+                    </div>
+                    <div class="mx-auto col-md-3 mb-4 mt-2" id="BtnAccount-Content">
+                        <button type="button" id="save" class="btn btn-primary col-12" onclick="StoreAccount()">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

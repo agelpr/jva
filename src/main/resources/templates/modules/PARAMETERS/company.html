@@ -1,0 +1,243 @@
+<div class="card">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-naturales" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="card-header d-flex justify-content-between flex-wrap">
+                        <h5 class="mb-3 mb-sm-0">Gestión de Empresas</h5>
+                        <button class="btn btn-primary new" id="btnNew" th:text="#{CREATENEW}" th:disabled="${Actions.indexOf('Create') < 0}" th:hidden="${Actions.indexOf('Create') < 0}"></button>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 p-4 pb-5">
+                        <table id="table_COMPANY" class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Empresa</th>                                
+                                    <th scope="col">Rif</th>                                
+                                    <th scope="col">Teléfono</th>
+                                    <th scope="col">Correo</th>  
+                                    <th scope="col">Acciones</th>                                
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="layouts/content.html :: CompanyModal"></th:block>
+<th:block th:replace="layouts/content.html :: MemberCompanyModal"></th:block>
+<script type="text/javascript" th:inline="javascript">
+var Array_Company = [];
+var Array_Member  = [];
+var id_country    = null;
+var Actions       = [[${Actions}]];
+$(document).ready( function () {
+    Load_Table_Company();
+    $('#MemberCompanyModal, #CompanyModal').modal({
+        backdrop: 'static',
+        keyboard: false,
+        show: false
+    });
+    $('#btnNew').on('click', function (){
+        $("#CompanyModalLabel").html("<i class='icon left fas fa-building'></i> "+"Creación de Empresa");
+        $('#BtnCompany-Content').prop('hidden', false);
+        $("#CompanyModal").modal("show");
+    });
+    $('#country').on('change', function() {
+        $('#state').empty().append('<option value="" selected> Seleccione...</option>');
+        $('#city').empty().append('<option value="" selected> Seleccione...</option>');
+        $('#municipality').empty().append('<option value="" selected> Seleccione...</option>');
+        $('#parish').empty().append('<option value="" selected> Seleccione...</option>');
+        if($(this).val() != '' && id_country != $(this).val()){
+            GetState($(this).val(),'state','');
+        }
+    });
+    $(".dnd").sortable({
+        connectWith: ".dnd",
+        cursor: "move",
+        helper: "clone",
+        items: "> div",
+        stop: function(event, ui) {
+            var item   = ui.item;
+            var parent = item.parent().attr("id");
+        // Here's where am ajax call will go
+        }
+    }).disableSelection();
+});
+function Load_Table_Company ()
+{
+    $('#table_COMPANY').DataTable({
+        processing: false,
+        ordering  : true,
+        select    : false,
+        destroy   : true,
+        bInfo     : false,
+        responsive: true,
+        language  : {"url": dataTableLang},
+        ajax: 
+        {
+            url: "/PARAMETERS/Records",
+            type: "POST",
+            data: {table:'company'},
+            dataSrc: function(data) 
+            {
+                Array_Company = data;
+                return data;
+            }
+        },
+        order       : [0, 'asc'],
+        "columnDefs": [
+            {
+                "targets": [1,2,3,4],
+                "orderable": false
+            }
+        ],
+        pageLength : 10,
+        lengthMenu : [10, 20, 25],
+        columns: [
+            {data: 'company_name'  , className: 'text-center', defaultContent: ''},
+            {data: 'rif_full'      , className: 'text-center', defaultContent: ''},
+            {data: 'company_phone' , className: 'text-center', defaultContent: ''},
+            {data: 'company_email' , className: 'text-center', defaultContent: ''},
+            {
+                data: null,
+                searchable: false,
+                className: "text-center btn-admin",
+                render: function (data, type, row, index) {
+                    var btn     = "";
+                    if(Actions.length > 0){
+                        btn += '<div class="btn-group">';
+                        btn += '<button class="btn btn-secondary btn-admin btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">';
+                        btn += '<i class="fas fa-cog"></i>';
+                        btn += '</button>';
+                        btn += '<ul class="dropdown-menu">';
+                        if(data.company_status == true){
+                            btn += '<li><a href="#" onClick="ManageCompany(' + index.row + ',' + data.id + ',' + 1 + ');" class="dropdown-item"'+ GetActions('View') +'>Ver Detalle</a></li>';
+                            btn += '<li><a href="#" onClick="ManageCompany(' + index.row + ',' + data.id + ',' + 2 + ');" class="dropdown-item"'+ GetActions('Edit') +'>Editar</a></li>';
+                            btn += '<li><a href="#" onClick="AddMember(' + data.id + ');" class="dropdown-item"'+ GetActions('Edit') +'>Asignar Integrantes</a></li>';
+                            btn += '<li><a href="#" onClick="ChangeStatusCompany(' + data.id + ',' + false + ');" class="dropdown-item"'+ GetActions('Edit') +'>Eliminar</a></li>';
+                        }else{
+                            btn += '<li><a href="#" onClick="ChangeStatusCompany(' + data.id + ',' + true + ');" class="dropdown-item"'+ GetActions('Edit') +'>Habilitar</a></li>';
+                        }
+                        btn += '</ul>';
+                        btn += '</div>';
+                    }
+                    return btn;
+                }
+            }
+        ]
+    });
+}
+function ManageCompany (index, id, type) 
+{
+    $('#id').remove();
+    $('<input>').attr({type:'hidden', id:'id', name:'id', value: ''+ Array_Company[index].id +''}).appendTo('form');
+    id_country = Array_Company[index].company_country;
+    $("#CompanyModalLabel").html(type == 1 ? "<i class='icon left fas fa-building'></i>Detalle de Empresa" : "<i class='icon left fas fa-building'></i>Editar Empresa");
+    $('#company_name').val(Array_Company[index].company_name);    
+    $('#code').val(Array_Company[index].company_code);    
+    $('#fantasy_name').val(Array_Company[index].company_fantasy_name);    
+    $('#legal_representative').val(Array_Company[index].company_legal_representative);    
+    $('#document_type').val(Array_Company[index].company_document_type).trigger('change');    
+    $('#rif_number').val(Array_Company[index].rif_number.split('-')[0]);    
+    $('#rif_code').val(Array_Company[index].rif_number.split('-')[1]);    
+    $('#phone').val(Array_Company[index].company_phone);    
+    $('#email').val(Array_Company[index].company_email);   
+    $('#country').val(Array_Company[index].company_country).trigger('change');
+    GetState(Array_Company[index].company_country.toString(),'state', Array_Company[index].company_state.toString());
+    GetCity(Array_Company[index].company_state.toString(),'city,municipality', Array_Company[index].company_city.toString(), Array_Company[index].company_municipality.toString());
+    GetParish(Array_Company[index].company_municipality.toString(), "parish", Array_Company[index].company_parish.toString());
+    $('#urbanization').val(Array_Company[index].company_urbanization);    
+    $('#postal_code').val(Array_Company[index].company_postal_code);    
+    $('#floor').val(Array_Company[index].company_floor);    
+    $('#work_place').val(Array_Company[index].company_workplace);    
+    $('.frmCompany').prop('disabled', type == 1 ? true : false);
+    $('#BtnCompany-Content').prop('hidden', type == 1 ? true : false);
+    $('#CompanyModal').modal('show');
+}
+function AddMember (id)
+{
+    $.ajax({
+        url  : '/PARAMETERS/FillDragAndDrop',
+        type : 'POST',
+        data : {id:id, table:'company'},
+    })
+    .done(function(response){
+        var Array_available = response.available;
+        var Array_assigned  = response.assigned;
+        for (var j = 0; j < Array_available.length; j++) {
+            $('#pool').append("<div id='"+ Array_available[j].id +"' class='box-drop'>"+ Array_available[j].member_name +"</div>");
+        }
+        for (var i = 0; i < Array_assigned.length; i++) {
+            $('#drop').append("<div id='"+ Array_assigned[i].id +"' class='box-drop'>"+ Array_assigned[i].member_name +"</div>");
+        }
+        ApplyFormats();
+        $('#id').remove();
+        $('<input>').attr({type:'hidden', id:'id', name:'id', value: ''+ id +''}).appendTo('#drag-content');
+        $("#MemberCompanyModalLabel").html("<i class='icon left fas fa-city'></i> "+"Asignación de Integrantes");
+        $("#MemberCompanyModal").modal("show");
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+    });
+}
+function StoreCompany ()
+{
+    var form = $('#frmCompany');
+    form.validate({
+        errorPlacement: function errorPlacement(error, element) 
+        {
+            if((element.hasClass('select2') || element.hasClass('MultiSelect2')) && element.next('.select2-container').length) {
+                error.insertAfter(element.next('.select2-container'));
+            }else if(element[0].classList[2] == "RifCode"){
+                return true;
+            }else{
+                error.insertAfter(element);
+            }
+        }
+    });
+    if(form.valid() == true){
+        $.ajax({
+            url  : '/COMPANY/StoreCompany',
+            type : 'POST',
+            data : form.serialize(),
+        })
+        .done(function(response){
+            if(response.code == 200){
+                Swal.fire(response.message, '', 'success')
+                    .then(() => {
+                        id_country = null;
+                        Load_Table_Company();
+                        $('#CompanyModal').modal('toggle');
+                        clean_modals('frmCompany');
+                    });
+            }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+        });
+    }
+}
+function ChangeStatusCompany (id, action)
+{
+    $.ajax({
+        url  : '/PARAMETERS/ChangeStatus',
+        type : 'POST',
+        data : {id:id, table:'company', status:action},
+    })
+    .done(function(response){
+        if(response.code == 200){
+            Swal.fire(response.message, '', 'success')
+                .then(() => {
+                    Load_Table_Company();
+                });
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+    });
+}
+</script>

@@ -1,0 +1,777 @@
+<div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 mb-3">
+    <div class="col-md-8 mb-3">
+        <h6><span class="fw-normal" th:text="#{WELCOME}"></span>, <span th:text="${session.FULLNAME}"></span> <span th:text="${session.MEMBER}"></span></h6>
+        <p class="mb-0"><span id="CurrentDate"></span></p>
+    </div>
+    <div class="col-md-4 d-flex justify-content-end">
+        <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true"><i class="fas fa-list-ul"></i></button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="fas fa-th"></i></button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="tab-content" id="pills-tabContent">
+    <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab" tabindex="0">
+        <div class="owl-carousel">
+            <div th:each="i : ${Dashboard.iterator()}" th:id="'bar'+${i.getString('IDGL')}">
+                <div class="card">
+                    <div class="card-title p-2 border-bottom mb-0" th:text="${i.getString('MEMBER') + ' Glory #' + i.getString('IDGL')}"></div>
+                    <div class="card-body">
+                        <div class="row g-0 align-items-center position-relative border-bottom border-200">
+                            <div class="col ps-x1 py-1 position-static justify-content-start">
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <div class="bg-light p-2 me-3">
+                                        <h6>#1</h6>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="d-flex align-items-end"> 
+                                            <p>CAJETIN</p> 
+                                            <h6 class="ms-3 fw-semibold" th:text="${i.getString('CAJ1')}"></h6>
+                                            <p class="text-muted fz-10">/600</p>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                            <th:block th:if="${i.getInt('CAJ1P') <= 25}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-good"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-good" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ1P')} + '%'" th:aria-valuenow="${i.getInt('CAJ1P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ1P') > 25 && i.getInt('CAJ1P') <= 50}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-normal"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-normal" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ1P')} + '%'" th:aria-valuenow="${i.getInt('CAJ1P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ1P') > 50 && i.getInt('CAJ1P') <= 100}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-bad"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-bad" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ1P')} + '%'" th:aria-valuenow="${i.getInt('CAJ1P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                        <div class="row g-0 align-items-center position-relative border-bottom border-200">
+                            <div class="col ps-x1 py-1 position-static justify-content-start">
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <div class="bg-light p-2 me-3">
+                                        <h6>#2</h6>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="d-flex align-items-end"> 
+                                            <p>CAJETIN</p> 
+                                            <h6 class="ms-3 fw-semibold" th:text="${i.getString('CAJ2')}"></h6>
+                                            <p class="text-muted fz-10">/600</p>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                            <th:block th:if="${i.getInt('CAJ2P') <= 25}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-good"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-good" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ2P')} + '%'" th:aria-valuenow="${i.getInt('CAJ2P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ2P') > 25 && i.getInt('CAJ2P') <= 50}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-normal"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-normal" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ2P')} + '%'" th:aria-valuenow="${i.getInt('CAJ2P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ2P') > 50 && i.getInt('CAJ2P') <= 100}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-bad"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-bad" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ2P')} + '%'" th:aria-valuenow="${i.getInt('CAJ2P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                        <div class="row g-0 align-items-center position-relative border-bottom border-200">
+                            <div class="col ps-x1 py-1 position-static justify-content-start">
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <div class="bg-light p-2 me-3">
+                                        <h6>#3</h6>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="d-flex align-items-end"> 
+                                            <p>CAJETIN</p> 
+                                            <h6 class="ms-3 fw-semibold" th:text="${i.getString('CAJ3')}"></h6>
+                                            <p class="text-muted fz-10">/600</p>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                            <th:block th:if="${i.getInt('CAJ3P') <= 25}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-good"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-good" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ3P')} + '%'" th:aria-valuenow="${i.getInt('CAJ3P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ3P') > 25 && i.getInt('CAJ3P') <= 50}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-normal"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-normal" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ3P')} + '%'" th:aria-valuenow="${i.getInt('CAJ3P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ3P') > 50 && i.getInt('CAJ3P') <= 100}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-bad"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-bad" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ3P')} + '%'" th:aria-valuenow="${i.getInt('CAJ3P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                        <div class="row g-0 align-items-center position-relative border-bottom border-200">
+                            <div class="col ps-x1 py-1 position-static justify-content-start">
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <div class="bg-light p-2 me-3">
+                                        <h6>#4</h6>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="d-flex align-items-end"> 
+                                            <p>CAJETIN</p> 
+                                            <h6 class="ms-3 fw-semibold" th:text="${i.getString('CAJ4')}"></h6>
+                                            <p class="text-muted fz-10">/600</p>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                            <th:block th:if="${i.getInt('CAJ4P') <= 25}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-good"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-good" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ4P')} + '%'" th:aria-valuenow="${i.getInt('CAJ4P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ4P') > 25 && i.getInt('CAJ4P') <= 50}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-normal"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-normal" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ4P')} + '%'" th:aria-valuenow="${i.getInt('CAJ4P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ4P') > 50 && i.getInt('CAJ4P') <= 100}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-bad"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-bad" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ4P')} + '%'" th:aria-valuenow="${i.getInt('CAJ4P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                        <div class="row g-0 align-items-center position-relative border-bottom border-200">
+                            <div class="col ps-x1 py-1 position-static justify-content-start">
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <div class="bg-light p-2 me-3">
+                                        <h6>#5</h6>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="d-flex align-items-end"> 
+                                            <p>CAJETIN</p> 
+                                            <h6 class="ms-3 fw-semibold" th:text="${i.getString('CAJ5')}"></h6>
+                                            <p class="text-muted fz-10">/600</p>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                            <th:block th:if="${i.getInt('CAJ5P') <= 25}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-good"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-good" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ5P')} + '%'" th:aria-valuenow="${i.getInt('CAJ5P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ5P') > 25 && i.getInt('CAJ5P') <= 50}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-normal"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-normal" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ5P')} + '%'" th:aria-valuenow="${i.getInt('CAJ5P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ5P') > 50 && i.getInt('CAJ5P') <= 100}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-bad"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-bad" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ5P')} + '%'" th:aria-valuenow="${i.getInt('CAJ5P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                        <div class="row g-0 align-items-center position-relative border-bottom border-200">
+                            <div class="col ps-x1 py-1 position-static justify-content-start">
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <div class="bg-light p-2 me-3">
+                                        <h6>#6</h6>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="d-flex align-items-end"> 
+                                            <p>CAJETIN</p> 
+                                            <h6 class="ms-3 fw-semibold" th:text="${i.getString('CAJ6')}"></h6>
+                                            <p class="text-muted fz-10">/600</p>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                            <th:block th:if="${i.getInt('CAJ6P') <= 25}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-good"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-good" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ6P')} + '%'" th:aria-valuenow="${i.getInt('CAJ6P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ6P') > 25 && i.getInt('CAJ6P') <= 50}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-normal"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-normal" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ6P')} + '%'" th:aria-valuenow="${i.getInt('CAJ6P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ6P') > 50 && i.getInt('CAJ6P') <= 100}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-bad"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-bad" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ6P')} + '%'" th:aria-valuenow="${i.getInt('CAJ6P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                        <div class="row g-0 align-items-center position-relative border-bottom border-200">
+                            <div class="col ps-x1 py-1 position-static justify-content-start">
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <div class="bg-light p-2 me-3">
+                                        <h6>#7</h6>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="d-flex align-items-end"> 
+                                            <p>CAJETIN</p> 
+                                            <h6 class="ms-3 fw-semibold" th:text="${i.getString('CAJ7')}"></h6>
+                                            <p class="text-muted fz-10">/600</p>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                            <th:block th:if="${i.getInt('CAJ7P') <= 25}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-good"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-good" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ7P')} + '%'" th:aria-valuenow="${i.getInt('CAJ7P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ7P') > 25 && i.getInt('CAJ7P') <= 50}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-normal"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-normal" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ7P')} + '%'" th:aria-valuenow="${i.getInt('CAJ7P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ7P') > 50 && i.getInt('CAJ7P') <= 100}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-bad"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-bad" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ7P')} + '%'" th:aria-valuenow="${i.getInt('CAJ7P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                        <div class="row g-0 align-items-center position-relative border-bottom border-200">
+                            <div class="col ps-x1 py-1 position-static justify-content-start">
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <div class="bg-light p-2 me-3">
+                                        <h6>#8</h6>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="d-flex align-items-end"> 
+                                            <p>CAJETIN</p> 
+                                            <h6 class="ms-3 fw-semibold" th:text="${i.getString('CAJ8')}"></h6>
+                                            <p class="text-muted fz-10">/600</p>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                            <th:block th:if="${i.getInt('CAJ8P') <= 25}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-good"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-good" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ8P')} + '%'" th:aria-valuenow="${i.getInt('CAJ8P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ8P') > 25 && i.getInt('CAJ8P') <= 50}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-normal"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-normal" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ8P')} + '%'" th:aria-valuenow="${i.getInt('CAJ8P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ8P') > 50 && i.getInt('CAJ8P') <= 100}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-bad"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-bad" role="progressbar" th:style="'width: ' + ${i.getInt('CAJ8P')} + '%'" th:aria-valuenow="${i.getInt('CAJ8P')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                        <div class="row g-0 align-items-center position-relative border-bottom border-200">
+                            <div class="col ps-x1 py-1 position-static justify-content-start">
+                                <div class="d-flex justify-content-start align-items-center">
+                                    <div class="bg-light p-2 me-3">
+                                        <h6>#9</h6>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="d-flex align-items-end"> 
+                                            <p>RECOLECTA</p> 
+                                            <h6 class="ms-3 fw-semibold" th:text="${i.getString('CAJR')}"></h6>
+                                            <p class="text-muted fz-10">/2000</p>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                            <th:block th:if="${i.getInt('CAJRP') <= 25}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-good"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-good" role="progressbar" th:style="'width: ' + ${i.getInt('CAJRP')} + '%'" th:aria-valuenow="${i.getInt('CAJRP')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJRP') > 25 && i.getInt('CAJRP') <= 50}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-normal"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-normal" role="progressbar" th:style="'width: ' + ${i.getInt('CAJRP')} + '%'" th:aria-valuenow="${i.getInt('CAJRP')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJRP') > 50 && i.getInt('CAJRP') <= 100}">
+                                <div class="col py-1">
+                                    <div class="row d-flex justify-content-end g-0">
+                                        <div class="col-6 position-relative bg-bad"></div>
+                                        <div class="col-6 pe-x1 ps-2">
+                                            <div class="progress bg-200 me-2" style="height: 5px;">
+                                                <div class="progress-bar rounded-pill bp-bad" role="progressbar" th:style="'width: ' + ${i.getInt('CAJRP')} + '%'" th:aria-valuenow="${i.getInt('CAJRP')}" aria-valuemin="0" aria-valuemax="100"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab" tabindex="0">
+        <div class="row row-cols-2 row-cols-sm-3 row-cols-md-5">
+            <div th:each="i : ${Dashboard.iterator()}" th:id="'box'+${i.getString('IDGL')}" class="col mb-3 ">
+                <div class="card">
+                    <div class="card-title p-2 border-bottom mb-0" th:text="${i.getString('MEMBER') + ' Glory #' + i.getString('IDGL')}"></div>
+                    <div class="card-body pb-0 pt-0">
+                        <div class="row row-cols-1 row-cols-md-2">
+                            <!-- CAJETIN #1 -->
+                            <th:block th:if="${i.getInt('CAJ1P') <= 25}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-good">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ1')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ1P') > 25 && i.getInt('CAJ1P') <= 50}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-normal">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ1')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ1P') > 50 && i.getInt('CAJ1P') <= 100}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-bad">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ1')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <!-- CAJETIN #2 -->
+                            <th:block th:if="${i.getInt('CAJ2P') <= 25}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-good">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ2')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ2P') > 25 && i.getInt('CAJ2P') <= 50}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-normal">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ2')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ2P') > 50 && i.getInt('CAJ2P') <= 100}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-bad">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ2')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <!-- CAJETIN #3 -->
+                            <th:block th:if="${i.getInt('CAJ3P') <= 25}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-good">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ3')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ3P') > 25 && i.getInt('CAJ3P') <= 50}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-normal">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ3')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ3P') > 50 && i.getInt('CAJ3P') <= 100}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-bad">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ3')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <!-- CAJETIN #4 -->
+                            <th:block th:if="${i.getInt('CAJ4P') <= 25}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-good">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ4')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ4P') > 25 && i.getInt('CAJ4P') <= 50}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-normal">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ4')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ4P') > 50 && i.getInt('CAJ4P') <= 100}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-bad">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ4')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <!-- CAJETIN #5 -->
+                            <th:block th:if="${i.getInt('CAJ5P') <= 25}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-good">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ5')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ5P') > 25 && i.getInt('CAJ5P') <= 50}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-normal">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ5')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ5P') > 50 && i.getInt('CAJ5P') <= 100}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-bad">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ5')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <!-- CAJETIN #6 -->
+                            <th:block th:if="${i.getInt('CAJ6P') <= 25}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-good">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ6')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ6P') > 25 && i.getInt('CAJ6P') <= 50}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-normal">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ6')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ6P') > 50 && i.getInt('CAJ6P') <= 100}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-bad">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ6')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <!-- CAJETIN #7 -->
+                            <th:block th:if="${i.getInt('CAJ7P') <= 25}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-good">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ7')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ7P') > 25 && i.getInt('CAJ7P') <= 50}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-normal">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ7')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ7P') > 50 && i.getInt('CAJ7P') <= 100}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-bad">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ7')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <!-- CAJETIN #8 -->
+                            <th:block th:if="${i.getInt('CAJ8P') <= 25}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-good">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ8')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ8P') > 25 && i.getInt('CAJ8P') <= 50}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-normal">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ8')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJ8P') > 50 && i.getInt('CAJ8P') <= 100}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-bad">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJ8')}"></h6>
+                                        <p class="text-muted fz-10">/600</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <!-- CAJETIN #9 -->
+                            <th:block th:if="${i.getInt('CAJRP') <= 25}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-good">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJR')}"></h6>
+                                        <p class="text-muted fz-10">/2000</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJRP') > 25 && i.getInt('CAJRP') <= 50}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-normal">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJR')}"></h6>
+                                        <p class="text-muted fz-10">/2000</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                            <th:block th:if="${i.getInt('CAJRP') > 50 && i.getInt('CAJRP') <= 100}">
+                                <div class="col text-center p-0 pt-2 border-bottom position-relative bg-bad">
+                                    <div class="d-flex align-items-end mb-2">  
+                                        <h6 class="fw-semibold" th:text="${i.getString('CAJR')}"></h6>
+                                        <p class="text-muted fz-10">/2000</p>
+                                    </div> 
+                                </div>
+                            </th:block>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:inline="javascript">
+var CurrentTime = () => {
+    var  date = new Date();
+    var  hh   = date.getHours();
+    var  mm   = date.getMinutes();
+    var  ss   = date.getSeconds();
+
+    hh = hh < 10 ? '0'+hh : hh;
+    mm = mm < 10 ? '0'+mm : mm;
+    ss = ss < 10 ? '0'+ss : ss;
+
+    $('#CurrentDate').html([[${date}]]+' '+hh+':'+mm+':'+ss+' '+'Hrs');
+}
+CurrentTime();
+setInterval(CurrentTime, 1000);
+setTimeout(function () {if(current_page == 'homepage'){location.reload();}}, 300000);
+$(".owl-carousel").owlCarousel({
+  items:4,
+  loop:false,
+  margin:10,
+  autoplay:true,
+  autoplayTimeout:28000,
+  autoplayHoverPause:true,
+  responsiveClass:true,
+  responsive:{
+      0:{
+          items:1,
+          nav:true
+      },
+      600:{
+          items:2,
+          nav:false
+      },
+      1000:{
+          items:4,
+          nav:true,
+          loop:false
+      }
+  }
+});
+</script>

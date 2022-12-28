@@ -1,0 +1,135 @@
+<body class="login" oncontextmenu="return false;" th:fragment="login">
+    <div id="login-boxed">
+        <div id="login-box-img">
+            <div id="login-box-img01">
+            
+            </div>
+        </div>
+        <div id="login-box">
+           
+            <form id="formlogin" class="position-relative" th:action="@{/login}" method="post">
+                <img class="logo-login position-relative"src="img/logo-bancamiga.svg">
+                <input type="hidden" th:value="${Lang}"  name="lang" id="lang">
+                <div class="login-img mt-4">
+                    <div id="msg"></div>
+                    <h4 th:text="#{SING_IN}"></h4>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12 mb-3">
+                    <label class="login"><span th:text="#{EMAIL}"></span></label>
+                    <div class="input-group">
+                        <span class="input-group-text login "><i class="fa fa-user"></i></span>
+                        <input type="text" id="user" name="user" class="form-control login" th:placeholder="#{USER_PLACEHOLDER}">
+                    </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-12">
+                    <label class="login"><span th:text="#{PASS}"></span></label>
+                    <div class="input-group">
+                        <span class="input-group-text login"><i class="fa fa-lock"></i></span>
+                        <input type="password" id="password" name="password" class="form-control login" th:placeholder="#{PASS_PLACEHOLDER}">
+                        <span class="input-group-text login"><a href="javascript:ShowPass('ShowPass');" class="box "><i id="{!! 'icon_password' !!}" class="far fa-eye-slash"></i></a></span>
+                    </div>
+                </div>
+                <div class="inputBox mt-4 d-grid gap-2 col-12 mx-auto">
+                    <button type="button" id="login" name="login" class="btn btn-primary" th:text="#{ACCESS}"></button>
+                </div>
+                
+                <div class="btn-idiom mt-4">
+                    <i class="fa fa-globe"></i>
+                    <div class="button-idiom position-relative">
+                        <!-- <a id="lang_en" th:href="@{/lang(lang=en)}">
+                            <img src="img/Flag_USE.svg" width="20px">
+                            <spam th:text="#{LANG_EN}"></spam>
+                        </a> -->
+                        <a id="lang_es" th:href="@{/lang(lang=es)}">
+                            <img src="img/Flag_ES.svg"  width="20px">
+                            <spam th:text="#{LANG_ES}"></spam>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript"  th:inline="javascript">
+        var flag       = null;
+        var login_flag = null;
+        var form       = $('#frmRegister');
+        $(document).ready(function () {
+            $('.numeric').numeric();
+            $('.email').inputmask("email");
+            $(document).on('keypress', function(e){
+                if(e.keyCode == 13 && login_flag == null){
+                    loggin_in();
+                }
+            });
+            $('#login').on('click', function(){
+                loggin_in();
+            });
+            window.oncontextmenu = function () {
+                return false;
+            }
+            $(document).keydown(function (event) {
+                if (event.keyCode == 123) {
+                    return false;
+                }
+                else if ((event.ctrlKey && event.shiftKey && event.keyCode == 73) || (event.ctrlKey && event.shiftKey && event.keyCode == 74)) {
+                    return false;
+                }
+            });
+        });
+        function loggin_in ()
+        {
+            if(ValidateLoginFields() == true){
+                login_flag = true;
+                $('#login').prop('disabled', true);
+                LoadingWait();
+                $.ajax({
+                    url: "/login",
+                    type: 'POST',
+                    data: $('#formlogin').serialize(),
+                })
+                .done(function(response) {
+                    // console.log(response);
+                    $('#LoadingContent').waitMe("hide");
+                    if (response.code == "200") {
+                        window.location.replace("/home?lang="+ response.lang);
+                    } else {
+                        login_flag = null;
+                        $('#login').prop('disabled', false);
+                        toastr.error(response.message, 'Error: ');
+                    }
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+                });
+            }
+        }
+        function ShowPass(type)
+        {
+            if(type == 'ShowPass'){
+                if(flag == ''){
+                    $('#password').attr('type','text');
+                    $('#icon_password').removeClass('fa-eye-slash');
+                    $('#icon_password').addClass('fa-eye');
+                    flag = 'x';
+                }else{
+                    $('#password').attr('type','password');
+                    $('#icon_password').removeClass('fa-eye');
+                    $('#icon_password').addClass('fa-eye-slash');
+                    flag = '';
+                }
+            }
+        }
+        function ValidateLoginFields() 
+        {
+            if ($('#user').val() == '') {
+                toastr.error("Usuario vacío", 'Error: ');
+                return false;
+            }
+            if ($('#password').val() == '') {
+                toastr.error("Contraseña vacía", 'Error: ');
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>

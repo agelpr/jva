@@ -1,0 +1,105 @@
+<div class="card">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-naturales" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="card-header">
+                        <h5>Sesiones</h5>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 p-4 pb-5">
+                        <table id="table_SESSIONS" class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Usuario</th>                                
+                                    <th scope="col">Correo</th>                                
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>          
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:inline="javascript">
+var Array_session = [];
+var Actions       = [[${Actions}]];
+$(document).ready( function () {
+    Load_Table_SESSIONS();
+});
+function Load_Table_SESSIONS ()
+{
+    $('#table_SESSIONS').DataTable({
+        processing  : false,
+        ordering    : true,
+        select      : false,
+        destroy     : true,
+        searching   : true,
+        responsive  : true,
+        language    : {"url": dataTableLang},
+        order       : [0, 'asc'],
+        "columnDefs": [
+            {
+                "targets": [1,2],
+                "orderable": false
+            }
+        ],
+        ajax: 
+        {
+            url: "/USERS/Records",
+            type: "POST",
+            data: {table:'sessions'},
+            dataSrc: function(data) 
+            {
+                Array_session = data;
+                return data;
+            }
+        },
+        columns: [
+            {data: 'name' , className: 'text-center', defaultContent: ''},
+            {data: 'email', className: 'text-center', defaultContent: ''},
+            {
+                data: null,
+                searchable: false,
+                className: "text-center btn-admin",
+                render: function (data, type, row, index) {
+                    var btn = "";
+                    if(Actions.length > 0 && GetActions('Edit') != 'hidden'){
+                        btn += '<div class="btn-group">';
+                        btn += '<button class="btn btn-secondary btn-admin btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">';
+                        btn += '<i class="fas fa-cog"></i>';
+                        btn += '</button>';
+                        btn += '<ul class="dropdown-menu">';
+                        btn += '<li><a href="#" onClick="KillSession(' + data.id + ');" class="dropdown-item"'+ GetActions('Edit') +'>Cerrar Sesión</a></li>';
+                        btn += '</ul>';
+                        btn += '</div>';
+                    }
+                    return btn;
+                }
+            }
+        ]
+    });
+}
+function KillSession (id) 
+{
+    $.ajax({
+        url  : '/USERS/KillSession',
+        type : 'POST',
+        data : {id:id}
+    })
+    .done(function(response){
+        if(response.code == 200){
+            Swal.fire(response.message, '', 'success')
+            .then(() => {
+                Load_Table_SESSIONS();
+            });
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+    });
+}
+</script>

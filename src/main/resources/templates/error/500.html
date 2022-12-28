@@ -1,0 +1,86 @@
+<link th:href="@{/static/css/fontawesome/all.min.css}" rel="stylesheet" />
+<link rel="icon" type="image/png" sizes="32x32" th:href="@{img/icon.png}">
+<link rel="mask-icon" color="#5bbad5" th:href="@{img/icon.png}">
+<title>Error 500</title>
+<body>
+    <div class="content_wrap">
+        <div class="top"><g1>•</g1><g2>•</g2><g3>•</g3></div>
+        <div class="error">
+            <i class="fa fa-exclamation-triangle"></i>
+            <h1 class="title">Error 500</h1>
+            <p class="subtitle"><strong>Oops, algo salió mal</strong></p>
+            <p class="content">Trate de refrescar la página o sientase libre de contactarnos si el problema persiste.</p>
+        </div>
+    </div>
+</body>
+<style>
+body{
+	margin:0;
+	background:linear-gradient(45deg, #f5f7fb, #e5e5e5);
+    font-family: arial, sans-serif;
+    font-size: 14px
+}
+.content_wrap {
+    background: #fff;
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    display: block;
+    transform: translate(-50%, -50%);
+    top: 50%;
+    width: 35vw;
+    min-width: 500px;
+    color: #404040;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgb(0 0 0 / 16%);
+    font-size: 1.5em;
+    box-sizing: content-box;
+}
+.content_wrap .error{
+    width: 100%;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+h1.title {
+    margin: 0;
+    text-align: center;
+    padding: 1rem 0 0 0;
+    border-radius: 5px;
+}
+.content_wrap .top {
+    background: #29324B;
+    width: 100%;
+    height: 45px;
+    border-radius: 10px 10px 0 0;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+.content_wrap .top g1,
+.content_wrap .top g2,
+.content_wrap .top g3{
+    margin: 0 10px 0 0;
+    font-size: 50px;
+}
+.content_wrap .top g1{
+    color: #FC6E13;
+}
+.content_wrap .top g2{
+    color: #FFFFFF;
+}
+.content_wrap .top g3{
+    color: #435177;
+}
+.content_wrap i {
+    text-align: center;
+    width: 100%;
+    display: block;
+    font-size: 40px;
+    color: #29324B;
+}
+p.content, p.subtitle {
+    text-align: center;
+}
+</style>

@@ -1,0 +1,315 @@
+<div class="card">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-naturales" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="card-header d-flex justify-content-between flex-wrap">
+                        <h5 class="mb-3 mb-sm-0">Gestión de Usuarios </h5>
+                        <button class="btn btn-primary new" id="btnNew" th:text="#{CREATENEW}" th:disabled="${Actions.indexOf('Create') < 0}" th:hidden="${Actions.indexOf('Create') < 0}"></button>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 p-4 pb-5">
+                        <table id="table_USERS" class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Usuario</th>                                
+                                    <th scope="col">Correo</th>                                
+                                    <th scope="col">Grupo</th>                                
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="layouts/content.html :: UserModal"></th:block>
+<th:block th:replace="layouts/content.html :: PermitsModal"></th:block>
+<script type="text/javascript" th:inline="javascript">
+var UserFlag         = 'USERS';
+var Array_users      = [];
+var Actions          = [[${Actions}]];
+var id_company       = null;
+$(document).ready( function () {
+    Load_Table_USERS();
+    $('#UserModal, #PermitsModal').modal({
+        backdrop: 'static',
+        keyboard: false,
+        show: false
+    });
+    $('#btnNew').on('click', function() {
+        $("#UserModalLabel").html("<i class='icon left fas fa-user'></i> "+"Creación de usuario");
+        $('#BtnUser-Content').prop('hidden', false);
+        $("#UserModal").modal("show");
+    });
+    $('#member').on('change', function() {
+        // $('#member').empty().append('<option value="" selected> Seleccione...</option>');
+        $('#agency').empty().append('<option value="" selected> Seleccione...</option>');
+        if($(this).val() != '' && id_company != $(this).val()){
+            FillSelect($(this).val(),'agency','agency','')
+        }
+    });
+    // $('#company').on('change', function() {
+    //     $('#member').empty().append('<option value="" selected> Seleccione...</option>');
+    //     $('#agency').empty().append('<option value="" selected> Seleccione...</option>');
+    //     if($(this).val() != '' && id_company != $(this).val()){
+    //         FillSelect($(this).val(),'member','members','')
+    //     }
+    // });
+    $(".dnd").sortable({
+        connectWith: ".dnd",
+        cursor: "move",
+        helper: "clone",
+        items: "> div",
+        stop: function(event, ui) {
+            var item   = ui.item;
+            var parent = item.parent().attr("id");
+            if(parent == 'pool'){
+                $('#'+item[0].id).children().children().children().children('input').removeClass('ChckAll').prop('disabled', true).prop('checked', false).trigger('change');
+            }else{
+                $('#'+item[0].id).children().children().children().children('input').prop('disabled', false).addClass('ChckAll');
+                $('#'+item[0].id).children().children().children().children('input#view').prop('checked', true).trigger('change');
+            }
+        }
+    }).disableSelection();
+});
+function Load_Table_USERS ()
+{
+    $('#table_USERS').DataTable({
+        processing  : false,
+        ordering    : true,
+        select      : false,
+        destroy     : true,
+        searching   : true,
+        responsive  : true,
+        language    : {"url": dataTableLang},
+        ajax: 
+        {
+            url: "/USERS/Records",
+            type: "POST",
+            data: {table:'users'},
+            dataSrc: function(data) 
+            {
+                Array_users = data;
+                return data;
+            }
+        },
+        order       : [0, 'asc'],
+        "columnDefs": [
+            {
+                "targets": [1,2,3],
+                "orderable": false
+            }
+        ],
+        columns: [
+            {data: 'username'          , className: 'text-center' , defaultContent: ''},
+            {data: 'email'             , className: 'text-center' , defaultContent: ''},
+            {data: 'group_description' , className: 'text-center' , defaultContent: ''},
+            {
+                data: null,
+                searchable: false,
+                className: "text-center btn-admin",
+                render: function (data, type, row, index) {
+                    var btn = "";
+                    if(Actions.length > 0){
+                        btn += '<div class="btn-group">';
+                        btn += '<button class="btn btn-secondary btn-admin btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">';
+                        btn += '<i class="fas fa-cog"></i>';
+                        btn += '</button>';
+                        btn += '<ul class="dropdown-menu">';
+                        if(parseInt(data.id) == [[${session.IDUSR}]]){
+                            btn += '<li><a href="#" onClick="ManageUser(' + index.row + ',' + data.id + ',' + 1 + ');" class="dropdown-item"'+ GetActions('View') +'>Ver Detalle</a></li>';
+                        }else{
+                            switch(data.status)
+                            {
+                                case false:
+                                    btn += '<li><a href="#" onClick="ChangeStatusUser(' + data.id + ',' + true + ');" class="dropdown-item"'+ GetActions('Edit') +'>Habilitar</a></li>'
+                                    break;
+                                default:
+                                    btn += '<li><a href="#" onClick="ManageUser(' + index.row + ',' + data.id + ',' + 1 + ');" class="dropdown-item" title="Ver Detalle" '+ GetActions('View') +'>Ver Detalle</a></li>';
+                                    btn += '<li><a href="#" onClick="ManageUser(' + index.row + ',' + data.id + ',' + 2 + ');" class="dropdown-item"'+ GetActions('Edit') +'>Editar</a></li>';
+                                    btn += '<li><a href="#" onClick="ChangeStatusUser(' + data.id + ',' + false + ');" class="dropdown-item"'+ GetActions('Edit') +'>Deshabilitar</a></li>';
+                                    btn += '<li><a href="#" onClick="AddPermits(' + data.id + ',' + 2 + ',' + data.id_group + ');" class="dropdown-item"'+ GetActions('Edit') +'>Asignar Permisos</a></li>';
+                                    btn += '<li><a href="#" onClick="ResetPassword(' + index.row + ');" class="dropdown-item"'+ GetActions('Edit') +'>Resetear contraseña</a></li>';
+                                break;
+                            }
+                        }
+                        btn += '</ul>';
+                        btn += '</div>';
+                    }
+                    return btn;
+                }
+            }
+        ]
+    });
+}
+function ManageUser (index, id, type) 
+{
+    $('#id').remove();
+    $('<input>').attr({type:'hidden', id:'id', name:'id', value: ''+ Array_users[index].id +''}).appendTo('form');
+    id_company = Array_users[index].id_member;
+    // id_company = Array_users[index].id_company;
+    $("#UserModalLabel").html(type == 1 ? "<i class='icon left fas fa-user'></i>Detalle de usuario" : "<i class='icon left fas fa-credit-card'></i>Editar usuario");
+    $('#document_type').val(Array_users[index].id_document_type).trigger('change');
+    $('#document').val(Array_users[index].document);
+    $('#first_name').val(Array_users[index].first_name);
+    $('#second_name').val(Array_users[index].second_name);
+    $('#first_surname').val(Array_users[index].first_surname);
+    $('#second_surname').val(Array_users[index].second_surname);
+    $('#business_name').val(Array_users[index].business_name).trigger('change');
+    $('#email').val(Array_users[index].email);
+    $('#phone').val(Array_users[index].phone);
+    $('#user_group').val(Array_users[index].id_group).trigger('change');
+    // $('#company').val(Array_users[index].id_company).trigger('change');
+    // FillSelect(Array_users[index].id_company.toString(),'member', 'members', Array_users[index].id_member.toString());
+    $('#member').val(Array_users[index].id_member).trigger('change');        
+    FillSelect(Array_users[index].id_member.toString(),'agency', 'agency', Array_users[index].id_agency.toString());
+    $('.FrmUsers').prop('disabled', type == 1 ? true : false);
+    $('#BtnUser-Content').prop('hidden', type == 1 ? true : false);
+    $('#UserModal').modal('show');
+}
+function StoreUser ()
+{
+    var form = $('#frmUser');
+    form.validate({
+        errorPlacement: function errorPlacement(error, element) 
+        {
+            if((element.hasClass('select2') || element.hasClass('MultiSelect2')) && element.next('.select2-container').length) {
+                error.insertAfter(element.next('.select2-container'));
+            }else if(element[0].classList[2] == "RifCode"){
+                return true;
+            }else{
+                error.insertAfter(element);
+            }
+        }
+    });
+    if(form.valid() == true){
+        $.ajax({
+            url: "/USERS/StoreUser",
+            type: 'POST',
+            data: form.serialize(),
+        })
+        .done(function(response) {
+            if (response.code == 200) {                            
+                Swal.fire('Registro exitoso','','success')
+                    .then(() => {
+                        id_company = null;
+                        Load_Table_USERS();
+                        $('#UserModal').modal('toggle');
+                        clean_modals('frmUser', 'view');
+                    });
+            }else{
+                toastr.error(response.message);
+            }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+        });
+    }
+}
+function ChangeStatusUser (id, status) 
+{
+    $.ajax({
+        url  : '/USERS/ChangeStatusUser',
+        type : 'POST',
+        data : {id:id, status: status}
+    })
+    .done(function(response){
+        if(response.code == 200){
+            Swal.fire(response.message, '', 'success')
+            .then(() => {
+                Load_Table_USERS();
+            });
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+    });
+}
+function ResetPassword (index) 
+{
+    $.ajax({
+        url    : "/USERS/ResetPassword",
+        type   : "POST",
+        data   : {email:Array_users[index].email},
+    })
+    .done(function(response){
+        if(response.code == 200){
+            Swal.fire(response.message, '', 'success')
+            .then(() => {
+                Load_Table_USERS();
+            });
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+    });
+}
+function CheckFields (input, value, type) 
+{
+    switch(type)
+    {
+        case 2:
+            if($('#'+input).val() != ''){
+                if(ValidatePhoneFormat(value, input) == true){
+                    SearchFields(input, value, type);
+                }
+            }
+        break;
+        default:
+            if($('#'+input).val() != ''){
+                SearchFields(input, value, type);
+            }
+        break;
+    }
+}
+function SearchFields (input, value, type)
+{
+    if(ValidateUserFields(input, type) == true){
+        $.ajax({
+            url : "/SearchFields",
+            type: 'POST',
+            data: {id:$('#id').val() == undefined ? "null" : $('#id').val(), input:value, type:type.toString()},
+        })
+        .done(function(response) {
+            if(response.code == 200){
+                toastr.error(response.message);
+                $('#'+input).val('');
+            }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+            $('#LoadingContent').waitMe("hide");
+        });
+    }
+}
+function ValidateUserFields (input, type) 
+{
+    switch(type)
+    {
+        case 2:
+            if($('#'+input).val().length < 14){
+                toastr.error("Número de teléfono incorrecto", 'Error: ');
+                $('#'+input).val('');
+                return false;
+            }
+            if($('#phone').val() == $('#phone_alt').val()){
+                toastr.error("Los teléfonos no pueden ser iguales", 'Error: ');
+                $('#'+input).val('');
+                return false;
+            }
+        break;
+        default:
+            if($('#email').val() == $('#email_alt').val()){
+                toastr.error("Los correos no pueden ser iguales", 'Error: ');
+                $('#'+input).val('');
+                return false;
+            }
+        break;
+    }
+    return true;
+}
+</script>

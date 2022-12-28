@@ -1,0 +1,168 @@
+<div class="card">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-naturales" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="card-header d-flex justify-content-between flex-wrap">
+                        <h5 class="mb-3 mb-sm-0">Gestión de Módulos</h5>
+                        <button class="btn btn-primary new" id="btnNew" th:text="#{CREATENEW}" th:disabled="${Actions.indexOf('Create') < 0}" th:hidden="${Actions.indexOf('Create') < 0}"></button>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 p-4 pb-5">
+                        <table id="table_MODULE" class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Descripción</th>                                
+                                    <th scope="col">Acciones</th>                                
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="layouts/content.html :: ModuleModal"></th:block>
+<script type="text/javascript" th:inline="javascript">
+var Array_Module  = [];
+var Actions       = [[${Actions}]];
+$(document).ready( function () {
+    Load_Table_Module();
+    $('#ModuleModal').modal({
+        backdrop: 'static',
+        keyboard: false,
+        show: false
+    });
+    $('#btnNew').on('click', function (){
+        $("#ModuleModalLabel").html("<i class='icon left fas fa-list'></i> "+"Creación de Módulos");
+        $('#BtnModule-Content').prop('hidden', false);
+        $("#ModuleModal").modal("show");
+    });
+});
+function Load_Table_Module ()
+{
+    $('#table_MODULE').DataTable({
+        processing: false,
+        ordering  : true,
+        select    : false,
+        destroy   : true,
+        bInfo     : false,
+        responsive: true,
+        language  : {"url": dataTableLang},
+        ajax: 
+        {
+            url: "/PARAMETERS/Records",
+            type: "POST",
+            data: {table:'modules'},
+            dataSrc: function(data) 
+            {
+                Array_Module = data;
+                return data;
+            }
+        },
+        order       : [0, 'asc'],
+        "columnDefs": [
+            {
+                "targets": [1],
+                "orderable": false
+            }
+        ],
+        pageLength : 10,
+        lengthMenu : [10, 20, 25],
+        columns: [
+            {data: 'module'  , className: 'text-center', defaultContent: ''},
+            {
+                data: null,
+                searchable: false,
+                className: "text-center btn-admin",
+                render: function (data, type, row, index) {
+                    var btn     = "";
+                    if(Actions.length > 0){
+                        btn += '<div class="btn-group">';
+                        btn += '<button class="btn btn-secondary btn-admin btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">';
+                        btn += '<i class="fas fa-cog"></i>';
+                        btn += '</button>';
+                        btn += '<ul class="dropdown-menu">';
+                        btn += '<li><a href="#" onClick="ManageModule(' + index.row + ',' + data.id + ',' + 1 + ');" class="dropdown-item"'+ GetActions('View') +'>Ver Detalle</a></li>';
+                        btn += '<li><a href="#" onClick="ManageModule(' + index.row + ',' + data.id + ',' + 2 + ');" class="dropdown-item"'+ GetActions('Edit') +'>Editar</a></li>';
+                        btn += '<li><a href="#" onClick="Remove(' + data.id + ');" class="dropdown-item"'+ GetActions('Edit') +'>Eliminar</a></li>';
+                        btn += '</ul>';
+                        btn += '</div>';
+                    }
+                    return btn;
+                }
+            }
+        ]
+    });
+}
+function ManageModule (index, id, type) 
+{
+    $('#id').remove();
+    $('<input>').attr({type:'hidden', id:'id', name:'id', value: ''+ Array_Module[index].id +''}).appendTo('form');
+    $("#ModuleModalLabel").html(type == 1 ? "<i class='icon left fas fa-list'></i>Detalle de Módulo" : "<i class='icon left fas fa-list'></i>Editar Módulo");
+    $('#module_code').val(Array_Module[index].code);     
+    $('#module_icon').val(Array_Module[index].icon);     
+    $('#module_name').val(Array_Module[index].module);     
+    $('.frmModule').prop('disabled', type == 1 ? true : false);
+    $('#BtnModule-Content').prop('hidden', type == 1 ? true : false);
+    $('#ModuleModal').modal('show');
+}
+function StoreModule ()
+{
+    var form = $('#frmModule');
+    form.validate({
+        errorPlacement: function errorPlacement(error, element) 
+        {
+            if((element.hasClass('select2') || element.hasClass('MultiSelect2')) && element.next('.select2-container').length) {
+                error.insertAfter(element.next('.select2-container'));
+            }else if(element[0].classList[2] == "RifCode"){
+                return true;
+            }else{
+                error.insertAfter(element);
+            }
+        }
+    });
+    if(form.valid() == true){
+        $.ajax({
+            url  : '/PARAMETERS/StoreModule',
+            type : 'POST',
+            data : form.serialize(),
+        })
+        .done(function(response){
+            if(response.code == 200){
+                Swal.fire(response.message, '', 'success')
+                    .then(() => {
+                        id_country = null;
+                        Load_Table_Module();
+                        $('#ModuleModal').modal('toggle');
+                        clean_modals('frmModule');
+                    });
+            }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+        });
+    }
+}
+function Remove (id)
+{
+    $.ajax({
+        url  : '/PARAMETERS/Delete',
+        type : 'POST',
+        data : {id:id, table:'modules'},
+    })
+    .done(function(response){
+        if(response.code == 200){
+            Swal.fire(response.message, '', 'success')
+                .then(() => {
+                    Load_Table_Module();
+                });
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+    });
+}
+</script>

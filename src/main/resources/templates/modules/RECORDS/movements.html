@@ -1,0 +1,272 @@
+<div class="card">
+    <div class="card-header">
+        <h6>Movimientos</h6>
+    </div>
+    <div class="card-body">
+        <form id="frmMovements" onSubmit="false" autocomplete="off">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-5">
+                <div class="col-md-3 mb-2">
+                    <label for="device">Dispositivo</label>
+                    <select id="device" name ="device" class="form-select select2">
+                        <option value="0" selected>Seleccione...</option>
+                        <option th:each="i : ${device.iterator()}" th:value="${i.getString('id_glory')}" th:text="${i.getString('id_glory')}"></option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label for="operation">Tipo de Operación</label>
+                    <select id="operation" name ="operation" class="form-select select2">
+                        <option value="" selected>Seleccione...</option>
+                        <option value="DEP" >DEPÓSITO</option>
+                        <option value="REC" >RECOLECTA</option>
+                    </select>
+                </div>
+                <div class="col mb-2">
+                    <label for="date_range">Fecha</label>
+                    <input type="text" id="date_range" name="date_range" class="form-control date_range" placeholder="">
+                </div>
+                <div class="col-md-1 mb-2 mt-3 pe-0 ps-0">
+                    <button type="button" class="btn btn-primary mt-2 col-12" id="search" onclick="SearchData()"><i class="fas fa-search"></i> buscar</button>
+                </div>
+            </div>
+        </form>
+        <img id="bancamiga_logo" class="mb-4"src="img/BancamigaLogo.png" hidden>
+        <div class="col-xs-12 col-sm-12 col-md-12 pt-4 pb-3 hidden_table" hidden>
+            <table id="table_MOVEMENTS" class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Usuario</th>
+                        <th scope="col">Empresa</th>
+                        <th scope="col">Agencia</th>
+                        <th scope="col">Dispositivo</th>
+                        <th scope="col">Cuenta Bancaria</th>
+                        <th scope="col">Cuenta</th>
+                        <th scope="col">Desglose de Operación</th>
+                        <th scope="col">Referencia</th>
+                        <th scope="col">Moneda</th>
+                        <th scope="col">Tipo de Operación</th>                          
+                        <th scope="col">Fecha y Hora</th>                           
+                        <th scope="col">Monto</th>
+                        <th scope="col">Monto</th>
+                    </tr>
+                </thead>
+                <tfoot class="foot_hidden">
+                    <th scope="col"></th>                                
+                    <th scope="col"></th>                                
+                    <th scope="col"></th>                                
+                    <th scope="col"></th>                                
+                    <th scope="col"></th>                                
+                    <th scope="col"></th>                                
+                    <th scope="col"></th>                                
+                    <th scope="col"></th>                                
+                    <th scope="col"></th>                                
+                    <th scope="col"></th>
+                    <th scope="col" class="text_usd"></th>
+                    <th scope="col" class="cnt_usd"></th>                                
+                    <th scope="col" class="cnt_usd_format"></th>                                
+                </tfoot>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:inline="javascript">
+var Array_movements = [];
+function SearchData ()
+{
+    $.ajax({
+        url  : '/RECORDS/Search',
+        type : 'POST',
+        data : $('#frmMovements').serialize()
+    })
+    .done(function(response){
+        Array_movements = response;
+        $('.hidden_table').prop('hidden', false);
+        Load_table_MOVEMENTS(Array_movements);
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+    });
+}
+function Load_table_MOVEMENTS (value)
+{
+    $('#table_MOVEMENTS').DataTable({
+        processing: false,
+        ordering  : true,
+        select    : false,
+        destroy   : true,
+        bPaginate : true,
+        bInfo     : false,
+        searching : true,
+        responsive: true,
+        language  : {"url": dataTableLang},
+        data      : value,
+        dom       : 'lfrtipB',
+        buttons   : [
+					
+            {
+                extend: 'excel',
+                footer: true,
+                title : 'MOVIMIENTOS',
+                filename: function(){
+                    return FullDate+' _ '+'Movimientos';
+                },
+                text: 'Exportar a Excel <i class="fas fa-file-excel ms-1"></i>',
+                exportOptions: {
+                    columns: [ 1, 2, 3, 5, 6, 7, 8, 9, 10, 11],
+                },
+                customize: function (xlsx, win) {
+                    var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                    $('row:eq(2) c', sheet).attr('s', '55');  // wrapped text
+                }
+            },
+            {
+                extend: 'pdf',
+                footer: true,
+                pageSize: 'A4',
+				orientation: 'landscape', //portrait
+                title: 'MOVIMIENTOS',
+                filename: function(){
+                    return FullDate+' _ '+'Movimientos';
+                },
+                text: 'Exportar a PDF <i class="far fa-file-pdf ms-1"></i>',
+                exportOptions: {
+                    columns: [ 1, 2, 3, 5, 6, 7, 8, 9, 10, 12],
+                },
+                styles: {
+                    tableHeader: {
+                        alignment: 'center',
+                        fontSize: 7
+                    },
+                },                
+                customize: function (doc) {
+                    var canvas       = document.createElement('canvas');
+                    var img          = document.getElementById('bancamiga_logo');
+                    canvas.height    = img.naturalHeight;
+                    canvas.width     = img.naturalWidth;
+                    var ctx          = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+                    var base64Imagen = canvas.toDataURL();//img base64            
+                    var now          = new Date();//date footer
+                    var jsDate       = now.getDate() + '/' + (now.getMonth() + 1) + '/' + now.getFullYear() + '  Hora:' + now.getHours() + ':' + now.getMinutes() + ':' + now.getSeconds();
+                    
+                    //margin general
+                    doc.pageMargins = [30,60,20,30];
+                    // Set the font size fot the entire document
+                    doc.defaultStyle.fontSize = 10;
+                    // Set the fontsize for the table header
+                    doc.styles.tableHeader.fontSize = 10; 
+	
+                    doc['header'] = (function (page, pages) {
+                        return {
+                            table: {
+                                widths: ['auto', 'auto'],
+                                headerRows: 0,
+                                body: [
+                                    [
+                                        {
+                                            margin: [20, 10, 0, 0],
+                                            width: 120,//size of the image
+                                            alignment: 'center',
+                                            image: base64Imagen,
+                                        },
+                                    ],
+                                ]
+                            },
+                            layout: 'noBorders',
+                            margin: 10
+                        }
+                    });
+                    doc['footer'] = (function (page, pages) {
+                        return {
+                            columns: [
+                                {
+                                    alignment: 'left',
+                                    fontSize:10,
+                                    text: ['Fecha: ', { text: jsDate.toString() }]
+                                },
+                                
+                                {
+                                    alignment: 'right',
+                                    fontSize:10,
+                                    text: ['Página ', { text: page.toString() }, ' / ', { text: pages.toString() }]
+                                }
+                            ],
+                            margin: [20, 10, 30, 20],
+                        }
+                    });       
+                }
+            }
+        ],
+        footerCallback: function (tfoot, data, start, end, display) {
+            var total_usd = this.api()
+            .column(11)// column number
+            .data()
+            .reduce(function (a, b) {
+                return parseFloat(a) + parseFloat(b);
+            }, 0 ).toFixed(2);
+
+            $('.text_usd').text('Total USD ');
+            $('.cnt_usd_format').text(AmountFormat(total_usd));
+            $('.cnt_usd').text(total_usd);
+        },
+        order       : [0, 'asc'],
+        "columnDefs": [
+            {
+                "targets"  : [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                "orderable": false
+            }
+        ],
+        pageLength: 5,
+        lengthMenu: [5, 10, 20, 25],
+        columns: [
+            {data: 'audito'    , className: 'text-center hidden_column', defaultContent: ''},
+            {data: 'member'    , className: 'text-center', defaultContent: ''},
+            {data: 'agency'    , className: 'text-center', defaultContent: ''},
+            {data: 'id_glory'  , className: 'text-center', defaultContent: ''},
+            {data: 'cta_ope'   , className: 'text-center', defaultContent: ''},
+            {
+                data: null,
+                searchable: false,
+                className: "text-center btn-admin hidden_column",
+                render: function (data, type, row, index) {
+                    return AccountMask(data.cta_ope);
+                }
+            },
+            {
+                data: null,
+                searchable: false,
+                className: "text-center btn-admin",
+                render: function (data, type, row, index) {
+                    var StrOpe = '';
+                    var Array_operations = data.des_ope.split(',');
+                    for (var i = 0; i < Array_operations.length; i++) {
+                        StrOpe += Array_operations[i] + '$<br>'
+                    }
+                    return StrOpe;
+                }
+            },
+            {data: 'ref_ori'  , className: 'text-center', defaultContent: ''},
+            {data: 'mon_ope'  , className: 'text-center', defaultContent: ''},
+            {data: 'tipe_ope' , className: 'text-center', defaultContent: ''},
+            {
+                data: null,
+                searchable: false,
+                className: "text-center btn-admin",
+                render: function (data, type, row, index) {
+                    return data.fec_ope.split("-")[2] + '/' + data.fec_ope.split("-")[1] + '/' + data.fec_ope.split("-")[0]+' '+data.hor_ope;
+                }
+            },
+            {data: 'mto_ope'  , className: 'text-center hidden_column', defaultContent: ''},
+            {
+                data: null,
+                searchable: false,
+                className: "text-center btn-admin",
+                render: function (data, type, row, index) {
+                    return AmountFormat(data.mto_ope);
+                }
+            },
+        ]
+    });
+}
+</script>

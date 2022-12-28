@@ -1,0 +1,39 @@
+<div class="main-nav" th:fragment="sidebar">
+    <div class="main-header-left"></div>
+    <div class="content-menu">
+        <div class="menu custom-scrollbar">
+            <li id="home">
+                <th:block th:if="${session.current_page == 'home'}">
+                    <a th:href="@{'/inicio?lang='+${session.Lang}}" class="ajax home nav-move" id="homepage"><i class="icon left fa fa-home"></i><span  th:text="#{HOME_SING_IN}"></span></a>
+                </th:block>
+                <th:block th:unless="${session.current_page == 'home'}">
+                    <a th:href="@{'/inicio?lang='+${session.Lang}}" class="ajax home nav-move" id="homepage"><i class="icon left fa fa-home"></i><span th:text="#{HOME_SING_IN}"></span></a>
+                </th:block>
+            </li>
+            <li th:each="i : ${ListModules.iterator()}" th:id="${i.getString('code')}">
+                <a href="#" class="accordion">
+                    <i class="icon left" th:class="'icon left'+' '+${i.getString('icon')}"></i>
+                    <span th:text="#{${i.getString('code')}}"></span>
+                     <i class="icon right fa fa-angle-down"></i>
+                </a>
+                <ul>
+                 <li th:each="j : ${i.getJSONArray('submodules').iterator()}">
+                        <a th:text="#{${j.getString('code')}}" th:href="@{'/'+${j.getString('code')}+'?lang='+${session.Lang}}" class="ajax nav-move" th:id="${j.getString('code')}"><span></span></a>
+                    </li>
+                </ul>
+            </li>
+        </div>
+        <div class="menu config mb-3">
+            <div class="border-top mb-3"></div>
+            <li>
+                <a class="nav-move" onclick="FullScreen()"><i class="icon left fa fa-expand-arrows-alt"></i><span th:text="#{FULL_SCREEN}"></span></a>
+            </li>
+            <li>
+                <a class="nav-move mode" onclick="DarkMode()"><i class="icon left fa fa-moon"></i><span th:text="#{THEME}"></span></a>
+            </li>
+            <li id="logout">
+                <a href="#" class="nav-move" id="LogOut" onClick="BeforeLogOut()"><i class="icon left  fa fa-sign-out-alt"></i><span>Cerrar Sesión</span></a>
+            </li>           
+        </div>
+    </div>
+</div>

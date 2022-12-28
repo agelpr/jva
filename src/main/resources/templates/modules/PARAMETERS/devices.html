@@ -1,0 +1,185 @@
+<div class="card">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-naturales" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="card-header d-flex justify-content-between flex-wrap">
+                        <h5 class="mb-3 mb-sm-0">Gestión de Dispositivos</h5>
+                        <!-- <button class="btn btn-primary new" id="btnNew" th:text="#{CREATENEW}" th:disabled="${Actions.indexOf('Create') < 0}" th:hidden="${Actions.indexOf('Create') < 0}"></button> -->
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 p-4 pb-5">
+                        <table id="table_DEVICE" class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Serial</th>                                
+                                    <th scope="col">Empresa</th>                                
+                                    <th scope="col">Agencia</th>                                
+                                    <th scope="col">Acciones</th>                                
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="layouts/content.html :: DeviceModal"></th:block>
+<script type="text/javascript" th:inline="javascript">
+var Array_Devices = [];
+var Actions       = [[${Actions}]];
+var id_company    = null;
+$(document).ready( function () {
+    Load_Table_Device();
+    $('#DeviceModal').modal({
+        backdrop: 'static',
+        keyboard: false,
+        show: false
+    });
+    $('#btnNew').on('click', function (){
+        $("#DeviceModalLabel").html("<i class='icon left fas fa-desktop'></i> "+"Creación de Dispositivo");
+        $('#BtnDevice-Content').prop('hidden', false);
+        $("#DeviceModal").modal("show");
+    });
+    $('#member').on('change', function() {
+        $('#agency').empty().append('<option value="" selected> Seleccione...</option>');
+        if($(this).val() != '' && id_company != $(this).val()){
+            FillSelect($(this).val(),'agency','agency','')
+        }
+    });
+});
+function Load_Table_Device ()
+{
+    $('#table_DEVICE').DataTable({
+        processing: false,
+        ordering  : true,
+        select    : false,
+        destroy   : true,
+        bInfo     : false,
+        responsive: true,
+        language  : {"url": dataTableLang},
+        ajax: 
+        {
+            url: "/PARAMETERS/Records",
+            type: "POST",
+            data: {table:'device'},
+            dataSrc: function(data) 
+            {
+                Array_Devices = data;
+                return data;
+            }
+        },
+        order       : [0, 'asc'],
+        "columnDefs": [
+            {
+                "targets": [1,2,3],
+                "orderable": false
+            }
+        ],
+        pageLength : 10,
+        lengthMenu : [10, 20, 25],
+        columns: [
+            {data: 'serial'  , className: 'text-center', defaultContent: ''},
+            {data: 'member'  , className: 'text-center', defaultContent: ''},
+            {data: 'agency'  , className: 'text-center', defaultContent: ''},
+            {
+                data: null,
+                searchable: false,
+                className: "text-center btn-admin",
+                render: function (data, type, row, index) {
+                    var btn     = "";
+                    if(Actions.length > 0){
+                        btn += '<div class="btn-group">';
+                        btn += '<button class="btn btn-secondary btn-admin btn-lg dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">';
+                        btn += '<i class="fas fa-cog"></i>';
+                        btn += '</button>';
+                        btn += '<ul class="dropdown-menu">';
+                        // if(data.status == true){
+                            btn += '<li><a href="#" onClick="ManageDevice(' + index.row + ',' + data.id + ',' + 1 + ');" class="dropdown-item"'+ GetActions('View') +'>Ver Detalle</a></li>';
+                        //     btn += '<li><a href="#" onClick="ManageDevice(' + index.row + ',' + data.id + ',' + 2 + ');" class="dropdown-item"'+ GetActions('Edit') +'>Editar</a></li>';
+                        //     btn += '<li><a href="#" onClick="ChangeStatusDevice(' + data.id + ',' + false + ');" class="dropdown-item"'+ GetActions('Edit') +'>Eliminar</a></li>';
+                        // }else{
+                        //     btn += '<li><a href="#" onClick="ChangeStatusDevice(' + data.id + ',' + true + ');" class="dropdown-item"'+ GetActions('Edit') +'>Habilitar</a></li>';
+                        // }
+                        btn += '</ul>';
+                        btn += '</div>';
+                    }
+                    return btn;
+                }
+            }
+        ]
+    });
+}
+function ManageDevice (index, id, type) 
+{
+    $('#id').remove();
+    $('<input>').attr({type:'hidden', id:'id', name:'id', value: ''+ Array_Devices[index].id +''}).appendTo('form');
+    id_company = Array_Devices[index].id_member;
+    $("#DeviceModalLabel").html(type == 1 ? "<i class='icon left fas fa-desktop'></i>Detalle de Dispositivo" : "<i class='icon left fas fa-desktop'></i>Editar Dispositivo");
+    $('#device_serial').val(Array_Devices[index].serial);     
+    $('#member').val(Array_Devices[index].id_member).trigger('change');        
+    FillSelect(Array_Devices[index].id_member.toString(),'agency', 'agency', Array_Devices[index].id_agency.toString()); 
+    $('.frmDevice').prop('disabled', type == 1 ? true : false);
+    $('#BtnDevice-Content').prop('hidden', type == 1 ? true : false);
+    $('#DeviceModal').modal('show');
+}
+function StoreDevice ()
+{
+    var form = $('#frmDevice');
+    form.validate({
+        errorPlacement: function errorPlacement(error, element) 
+        {
+            if((element.hasClass('select2') || element.hasClass('MultiSelect2')) && element.next('.select2-container').length) {
+                error.insertAfter(element.next('.select2-container'));
+            }else if(element[0].classList[2] == "RifCode"){
+                return true;
+            }else{
+                error.insertAfter(element);
+            }
+        }
+    });
+    if(form.valid() == true){
+        $.ajax({
+            url  : '/PARAMETERS/StoreDevice',
+            type : 'POST',
+            data : form.serialize(),
+        })
+        .done(function(response){
+            console.log(response);
+            if(response.code == 200){
+                Swal.fire(response.message, '', 'success')
+                    .then(() => {
+                        id_company = null;
+                        Load_Table_Device();
+                        $('#DeviceModal').modal('toggle');
+                        clean_modals('frmDevice');
+                    });
+            }
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {
+            Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+        });
+    }
+}
+function ChangeStatusDevice (id, action)
+{
+    $.ajax({
+        url  : '/PARAMETERS/ChangeStatus',
+        type : 'POST',
+        data : {id:id, table:'device', status:action},
+    })
+    .done(function(response){
+        if(response.code == 200){
+            Swal.fire(response.message, '', 'success')
+                .then(() => {
+                    Load_Table_Device();
+                });
+        }
+    })
+    .fail(function(jqXHR, textStatus, errorThrown) {
+        Swal.fire(jqXHR.status.toString(), jqXHR.responseJSON.error, 'error');
+    });
+}
+</script>

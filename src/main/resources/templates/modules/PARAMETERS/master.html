@@ -1,0 +1,46 @@
+<div class="card">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-12">
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-naturales" role="tabpanel" aria-labelledby="nav-home-tab">
+                    <div class="card-header d-flex justify-content-between flex-wrap">
+                        <h5 class="mb-3 mb-sm-0">Maestro</h5>
+                        <button class="btn btn-primary new ajax" id="btnNew" href="#" data-href="" onclick="Create(1)" th:text="#{CREATENEW}" th:disabled="${Actions.indexOf('Create') < 0}" th:hidden="${Actions.indexOf('Create') < 0}"></button>
+                    </div>
+                    <div class="col-xs-12 col-sm-12 col-md-12 p-4 pb-5">
+                        <table id="table_MASTER" class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Descripción</th>                                
+                                    <th scope="col"></th>                                
+                                    <th scope="col"></th>                                
+                                    <th scope="col"></th>                                
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="layouts/content.html :: MaintenanceModal"></th:block>
+<th:block th:replace="layouts/content.html :: MaintenanceDscModal"></th:block>
+<script type="text/javascript" th:inline="javascript">
+var Actions = [[${Actions}]];
+var flag    = null;
+$(document).ready( function () {
+    Load_Table_MASTER(1, 'tb_table', 'tb_master');
+    $('#MaintenanceModal, #MaintenanceDscModal').modal({
+        backdrop: 'static',
+        keyboard: false,
+        show: false
+    });
+    $('#save_children').on('click', function(){
+       SaveMaintenance('frmMaintenanceDsc', 'tb_master', 'MaintenanceDscModal');
+    });
+});
+</script>

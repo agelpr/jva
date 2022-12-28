@@ -1,0 +1,48 @@
+@font-face {
+  font-family: 'pos';
+  src:  url('pos.eot');
+  src:  url('pos.eot#iefix') format('embedded-opentype'),
+    url('pos.ttf') format('truetype'),
+    url('pos.woff') format('woff'),
+    url('pos.svg#pos') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+.fsw {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'pos' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.fsw-pos7:before {
+  content: "\e900";
+}
+.fsw-pos6:before {
+  content: "\e901";
+}
+.fsw-pos5:before {
+  content: "\e902";
+}
+.fsw-pos4:before {
+  content: "\e903";
+}
+.fsw-pos3:before {
+  content: "\e904";
+}
+.fsw-pos2:before {
+  content: "\e905";
+}
+.fsw-pos1:before {
+  content: "\e906";
+}
